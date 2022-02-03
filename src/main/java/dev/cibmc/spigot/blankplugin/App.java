@@ -24,12 +24,27 @@ import org.bukkit.inventory.ItemStack;
 import dev.cibmc.spigot.blankplugin.Conveyors.Conveyors;
 import java.util.Collection;
 
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.Directional;
+import org.bukkit.entity.Entity;
+import org.bukkit.event.Listener;
+import java.util.List;
+import org.bukkit.util.Vector;
+
 import org.bukkit.entity.Item;
 
-public class App extends JavaPlugin {
+public class App extends JavaPlugin implements Listener{
+    final double VELOCITY = 0.1;
 
     @Override
     public void onEnable() {
+
+        Bukkit.getServer().getPluginManager().registerEvents(this, this);
+        getCommand("blank").setExecutor(this);
+
+        getServer().getScheduler().scheduleSyncRepeatingTask(this, new EntitySearch(), 1L, 1L);
         getLogger().info("Hello, SpigotMC!");
         File file = new File("./config/", "mainGeneratorConfiguration.yml");
         YamlConfiguration configStuff = YamlConfiguration.loadConfiguration(file);
@@ -144,11 +159,75 @@ public class App extends JavaPlugin {
             // ChatColor.GREEN + "Diamond" + ChatColor.GOLD + "has Been Created!");
             return true;
         }
+        if (cmd.getName().equalsIgnoreCase("blank") && args[0].equalsIgnoreCase("reload")) {
+            reloadConfig();
+        }
 
         return false;
     }
 
     public Conveyors getTpsCounter() {
         return new Conveyors();
+    }
+
+
+
+
+    class EntitySearch implements Runnable {
+        @Override
+        public void run() {
+            for (World world : getServer().getWorlds()) {
+                List<Player> players = world.getPlayers();
+                // No players in this world
+                if (players.isEmpty()) {
+                    continue;
+                }
+
+                for (Entity entity : world.getEntitiesByClass(Entity.class)) {
+                    Location entityLocation = entity.getLocation();
+
+                    if (entity.isDead()) {
+                        continue;
+                    }
+
+                    Block blockUnder = entityLocation.getBlock().getRelative(BlockFace.DOWN);
+
+                    if (blockUnder.getType() != Material.MAGENTA_GLAZED_TERRACOTTA) {
+                        continue;
+                    }
+
+                    if (entity instanceof Player) {
+                        Player player = (Player) entity;
+                        // Pressing shift stops the movement
+                        if (player.isSneaking()) {
+                            continue;
+                        }
+                    }
+
+                    BlockData blockData = blockUnder.getBlockData();
+                    Directional direction = (Directional) blockData;
+                    Vector entityDirection = entity.getVelocity();
+                    switch (direction.getFacing()) {
+                        case NORTH:
+                            entityDirection.setZ(VELOCITY);
+                            break;
+                        case SOUTH:
+                            entityDirection.setZ(-VELOCITY);
+                            break;
+                        case WEST:
+                            entityDirection.setX(VELOCITY);
+                            break;
+                        case EAST:
+                            entityDirection.setX(-VELOCITY);
+                            break;
+                        default:
+                            //
+                            break;
+                    }
+
+                    entity.setVelocity(entityDirection);
+                }
+            }
+        }
     }
 }

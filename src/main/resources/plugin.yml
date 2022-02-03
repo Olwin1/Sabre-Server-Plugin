@@ -15,3 +15,6 @@ commands:
    setgenerator:
       description: Creates A Generator
       usage: /<command> <block>
+   blank:
+      description: Creates A Generator
+      usage: /<command> [reload]
