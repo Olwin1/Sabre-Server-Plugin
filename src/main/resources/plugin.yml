@@ -16,5 +16,5 @@ commands:
       description: Creates A Generator
       usage: /<command> <block>
    blank:
-      description: Creates A Generator
-      usage: /<command> [reload]
+      description: Reloads The Plugin
+      usage: /<command>

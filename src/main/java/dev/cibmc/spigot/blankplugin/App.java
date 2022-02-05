@@ -32,11 +32,14 @@ import org.bukkit.entity.Entity;
 import org.bukkit.event.Listener;
 import java.util.List;
 import org.bukkit.util.Vector;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.block.Action;
 
 import org.bukkit.entity.Item;
 
 public class App extends JavaPlugin implements Listener{
-    final double VELOCITY = 0.1;
+    File file = new File("./config/", "blockSpeedConfig.yml");
+    YamlConfiguration blockSpeedConfig = YamlConfiguration.loadConfiguration(file);
 
     @Override
     public void onEnable() {
@@ -78,6 +81,7 @@ public class App extends JavaPlugin implements Listener{
     public void onDisable() {
         getLogger().info("See you again, SpigotMC!");
     }
+
 
     public boolean onCommand(CommandSender sender, Command cmd, String abel, String[] args) {
 
@@ -159,8 +163,12 @@ public class App extends JavaPlugin implements Listener{
             // ChatColor.GREEN + "Diamond" + ChatColor.GOLD + "has Been Created!");
             return true;
         }
-        if (cmd.getName().equalsIgnoreCase("blank") && args[0].equalsIgnoreCase("reload")) {
+        if (cmd.getName().equalsIgnoreCase("blank") && sender instanceof Player) {
+            Player player = (Player) sender;
             reloadConfig();
+            blockSpeedConfig = YamlConfiguration.loadConfiguration(file);
+
+            player.sendMessage("Configuration Has Been Reloaded.");
         }
 
         return false;
@@ -192,9 +200,24 @@ public class App extends JavaPlugin implements Listener{
 
                     Block blockUnder = entityLocation.getBlock().getRelative(BlockFace.DOWN);
 
-                    if (blockUnder.getType() != Material.MAGENTA_GLAZED_TERRACOTTA) {
-                        continue;
-                    }
+                    Material mat = blockUnder.getType();
+                    if (mat != Material.BLACK_GLAZED_TERRACOTTA &&
+                    mat != Material.BLUE_GLAZED_TERRACOTTA &&
+                    mat != Material.BROWN_GLAZED_TERRACOTTA &&
+                    mat != Material.CYAN_GLAZED_TERRACOTTA &&
+                    mat != Material.GRAY_GLAZED_TERRACOTTA &&
+                    mat != Material.GREEN_GLAZED_TERRACOTTA &&
+                    mat != Material.LIGHT_BLUE_GLAZED_TERRACOTTA &&
+                    mat != Material.LIGHT_GRAY_GLAZED_TERRACOTTA &&
+                    mat != Material.LIME_GLAZED_TERRACOTTA &&
+                    mat != Material.MAGENTA_GLAZED_TERRACOTTA &&
+                    mat != Material.ORANGE_GLAZED_TERRACOTTA &&
+                    mat != Material.PINK_GLAZED_TERRACOTTA &&
+                    mat != Material.PURPLE_GLAZED_TERRACOTTA &&
+                    mat != Material.RED_GLAZED_TERRACOTTA &&
+                    mat != Material.WHITE_GLAZED_TERRACOTTA &&
+                    mat != Material.YELLOW_GLAZED_TERRACOTTA) {continue;}
+                    getLogger().info(mat.name());
 
                     if (entity instanceof Player) {
                         Player player = (Player) entity;
@@ -207,6 +230,8 @@ public class App extends JavaPlugin implements Listener{
                     BlockData blockData = blockUnder.getBlockData();
                     Directional direction = (Directional) blockData;
                     Vector entityDirection = entity.getVelocity();
+                    double VELOCITY = blockSpeedConfig.getDouble(mat.name());
+                    getLogger().info(String.valueOf(VELOCITY));
                     switch (direction.getFacing()) {
                         case NORTH:
                             entityDirection.setZ(VELOCITY);
