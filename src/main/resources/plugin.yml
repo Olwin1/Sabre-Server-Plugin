@@ -18,3 +18,6 @@ commands:
    blank:
       description: Reloads The Plugin
       usage: /<command>
+   giveitems:
+      description: Gives Debug Items
+      usage: /<command>
