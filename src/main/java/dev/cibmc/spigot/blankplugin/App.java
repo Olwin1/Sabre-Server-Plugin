@@ -22,7 +22,7 @@ import java.util.Random;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
-import dev.cibmc.spigot.blankplugin.Conveyors.Conveyors;
+
 import net.kyori.adventure.text.Component;
 
 import java.util.Collection;
@@ -36,12 +36,17 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import java.util.List;
 import org.bukkit.util.Vector;
+
+import dev.cibmc.spigot.blankplugin.Enchantments.Conveyors;
+
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.block.Action;
 import org.bukkit.inventory.meta.ItemMeta;
 import java.util.ArrayList;
 import net.kyori.adventure.text.format.TextColor;
-import net.md_5.bungee.api.chat.TextComponent;
+
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.player.PlayerMoveEvent;
 
 import org.bukkit.entity.Item;
 
@@ -108,6 +113,41 @@ public class App extends JavaPlugin implements Listener {
     public void onDisable() {
         getLogger().info("See you again, SpigotMC!");
     }
+
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onMoveEvent(PlayerMoveEvent event) {
+        // will check if the player is in the portal or not.
+        Player player = event.getPlayer();
+        Location loc = player.getLocation();
+        if (-34 < loc.getX() && loc.getX() < -29) {
+            double y = loc.getY();
+            if (-317 < loc.getZ() && loc.getZ() < -316) {
+
+                if (-4 <= y && 0 > y) {
+
+                    double end = y - Math.floor(y);
+                    loc.setY(-22 + end);
+                    Vector velo = player.getVelocity();
+                    player.teleport(loc);
+                    player.setVelocity(velo);
+                }
+
+            } else if (-314 < loc.getZ() && loc.getZ() < -312) {
+
+                if (-22 <= y && -19 > y) {
+
+                    double end = y - Math.floor(y);
+                    loc.setY(-4 + end);
+                    Vector velo = player.getVelocity();
+                    player.teleport(loc);
+                    player.setVelocity(velo);
+                }
+
+            }
+        }
+    }
+
+    
 
     // Get text from component:
     // PlainTextComponentSerializer.plainText().serialize(component)
