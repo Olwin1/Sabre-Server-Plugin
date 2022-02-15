@@ -10,15 +10,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.Material;
 import java.io.IOException;
 import org.bukkit.World;
-//import org.bukkit.plugin.Plugin;
 import org.bukkit.configuration.file.YamlConfiguration;
-//import org.bukkit.event.EventHandler;
-//import org.bukkit.entity.Item;
-//import org.bukkit.event.player.PlayerDropItemEvent;
 import java.io.File;
-//import org.bukkit.persistence.PersistentDataContainer;
 import java.util.Random;
-//import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
@@ -27,6 +21,7 @@ import net.kyori.adventure.text.Component;
 
 import java.util.Collection;
 
+import org.bukkit.block.data.type.Bell;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
@@ -37,25 +32,54 @@ import org.bukkit.event.Listener;
 import java.util.List;
 import org.bukkit.util.Vector;
 
-import dev.cibmc.spigot.blankplugin.Enchantments.Conveyors;
-
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.block.Action;
 import org.bukkit.inventory.meta.ItemMeta;
 import java.util.ArrayList;
+import java.util.Arrays;
+
 import net.kyori.adventure.text.format.TextColor;
 
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerMoveEvent;
 
 import org.bukkit.entity.Item;
+import dev.cibmc.spigot.blankplugin.DB.Database.SQLite;
+import java.util.HashMap;
+import dev.cibmc.spigot.blankplugin.DB.Database.Database;
+import java.util.Map;
+import org.bukkit.event.block.BlockBreakEvent;
 
 public class App extends JavaPlugin implements Listener {
     File file = new File("./config/", "blockSpeedConfig.yml");
     YamlConfiguration blockSpeedConfig = YamlConfiguration.loadConfiguration(file);
+    private Map<String, Database> databases = new HashMap<String, Database>();
+    public static App INSTANCE;
+
+    public App() {
+
+        getLogger().info("2");
+
+    }
+
+    static ArrayList<String> playerName = new ArrayList<String>();
+    static ArrayList<ArrayList<Integer[]>> bellLocations = new ArrayList<ArrayList<Integer[]>>();
 
     @Override
     public void onEnable() {
+        INSTANCE = this;
+        this.getDataFolder().mkdirs();
+        getLogger().info("d");
+        initializeDatabase("blankplugin",
+                "CREATE TABLE IF NOT EXISTS gens (uuid VARCHAR(36), gen_x INTEGER[], gen_y INTEGER[], gen_z INTEGER[]);");
+        getLogger().info("d");
+
+        Collection<? extends Player> players = this.getServer().getOnlinePlayers();
+        for (Player player : players) {
+            playerName.add(player.getName());
+            ArrayList<Integer[]> inner = new ArrayList<Integer[]>();
+            bellLocations.add(inner);
+        }
 
         Bukkit.getServer().getPluginManager().registerEvents(this, this);
         getCommand("blank").setExecutor(this);
@@ -83,6 +107,31 @@ public class App extends JavaPlugin implements Listener {
             }.runTaskTimer(this, 10, Integer.parseInt(arr[1]) * 20);
 
         }
+
+    }
+
+    public void initializeDatabase(final String databaseName, final String createStatement) {
+        getLogger().info(databaseName + createStatement);
+        final Database db = new SQLite(databaseName, createStatement, this.getDataFolder());
+        getLogger().info("7");
+        db.load();
+        getLogger().info("8");
+        this.databases.put(databaseName, db);
+        getLogger().info("7");
+    }
+
+    public Map<String, Database> getDatabases() {
+        getLogger().info("12");
+        return this.databases;
+    }
+
+    public Database getDatabase(final String databaseName) {
+        getLogger().info("1");
+        return this.getDatabases().get(databaseName);
+    }
+
+    public static App getInstance() {
+        return INSTANCE;
     }
 
     public static String color(String s) {
@@ -107,6 +156,48 @@ public class App extends JavaPlugin implements Listener {
         x = x.append(Component.text(speed + " m/s").color(TextColor.fromHexString("#87a1ff")));
         lore.add(x);
         return createItem(Material.PAPER, 1, name, nameColour, lore);
+    }
+
+    static ItemStack createDropperItem(String name, String nameColour, String value) {
+        List<Component> lore = new ArrayList<>();
+        lore.add(Component.text(""));
+        lore.add(Component.text("Drop Value:").color(TextColor.fromHexString("#a8a8a8")));
+        Component x = Component.text("• ").color(TextColor.fromHexString("#a8a8a8"));
+        x = x.append(Component.text("$" + value).color(TextColor.fromHexString("#87a1ff")));
+        lore.add(x);
+        return createItem(Material.PAPER, 1, name, nameColour, lore);
+    }
+
+    static void placeDropper(Player player, Block b, Material mat) {
+        Block b2 = b.getRelative(BlockFace.UP);
+        BlockFace dir = player.getFacing();
+        Block b3 = b2.getRelative(dir);
+        if (b3.getType() != Material.AIR) {
+            return;
+        }
+        if (b2.getType() != Material.AIR) {
+            return;
+        }
+        if (b.getType() != Material.AIR) {
+            return;
+        }
+        b.setType(mat);
+        b2.setType(mat);
+        b3.setType(Material.BELL);
+        Bell bloc = (Bell) b3.getBlockData();
+        ((Directional) bloc).setFacing(dir.getOppositeFace());
+        bloc.setAttachment(Bell.Attachment.SINGLE_WALL);
+
+        b3.setBlockData(bloc);
+        ItemStack paper = player.getInventory().getItemInMainHand();
+        paper.setAmount(paper.getAmount() - 1);
+        player.getInventory().setItemInMainHand(paper);
+        Integer index = playerName.indexOf(player.getName());
+        ArrayList<Integer[]> list = bellLocations.get(index);
+        Location bellLocation = b3.getLocation();
+        Integer[] coordinates = { bellLocation.getBlockX(), bellLocation.getBlockY(), bellLocation.getBlockZ() };
+        list.add(coordinates);
+        bellLocations.set(index, list);
     }
 
     @Override
@@ -147,200 +238,279 @@ public class App extends JavaPlugin implements Listener {
         }
     }
 
-    
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onBlockBreak(BlockBreakEvent event) {
+        getLogger().info("1 blok");
+        for (ArrayList<Integer[]> item : bellLocations) {
+            Location location = event.getBlock().getLocation();
+            Block tempBlockW = event.getBlock().getRelative(BlockFace.EAST);
+            Block tempBlockE = event.getBlock().getRelative(BlockFace.WEST);
+            Block tempBlockN = event.getBlock().getRelative(BlockFace.SOUTH);
+            Block tempBlockS = event.getBlock().getRelative(BlockFace.NORTH);
+
+            if (tempBlockW.getType() == Material.BELL) {
+                Directional direction = (Directional) tempBlockW.getBlockData();
+                if (direction.getFacing() == BlockFace.WEST) {
+                    location = tempBlockW.getLocation();
+                }
+            }
+
+            else if (tempBlockE.getType() == Material.BELL) {
+                Directional direction = (Directional) tempBlockE.getBlockData();
+                if (direction.getFacing() == BlockFace.EAST) {
+                    location = tempBlockE.getLocation();
+                }
+            }
+
+            else if (tempBlockN.getType() == Material.BELL) {
+                Directional direction = (Directional) tempBlockN.getBlockData();
+                if (direction.getFacing() == BlockFace.NORTH) {
+                    location = tempBlockN.getLocation();
+                }
+            }
+
+            else if (tempBlockS.getType() == Material.BELL) {
+                Directional direction = (Directional) tempBlockS.getBlockData();
+                if (direction.getFacing() == BlockFace.SOUTH) {
+                    location = tempBlockS.getLocation();
+                }
+            }
+
+
+            Block facing = event.getBlock().getRelative(BlockFace.UP);
+            tempBlockW = facing.getRelative(BlockFace.EAST);
+            tempBlockE = facing.getRelative(BlockFace.WEST);
+            tempBlockN = facing.getRelative(BlockFace.SOUTH);
+            tempBlockS = facing.getRelative(BlockFace.NORTH);
+
+            if (tempBlockW.getType() == Material.BELL) {
+                Directional direction = (Directional) tempBlockW.getBlockData();
+                if (direction.getFacing() == BlockFace.WEST) {
+                    location = tempBlockW.getLocation();
+                }
+            }
+
+            else if (tempBlockE.getType() == Material.BELL) {
+                Directional direction = (Directional) tempBlockE.getBlockData();
+                if (direction.getFacing() == BlockFace.EAST) {
+                    location = tempBlockE.getLocation();
+                }
+            }
+
+            else if (tempBlockN.getType() == Material.BELL) {
+                Directional direction = (Directional) tempBlockN.getBlockData();
+                if (direction.getFacing() == BlockFace.NORTH) {
+                    location = tempBlockN.getLocation();
+                }
+            }
+
+            else if (tempBlockS.getType() == Material.BELL) {
+                Directional direction = (Directional) tempBlockS.getBlockData();
+                if (direction.getFacing() == BlockFace.SOUTH) {
+                    location = tempBlockS.getLocation();
+                }
+            }
+
+            Integer[] x = { location.getBlockX(), location.getBlockY(), location.getBlockZ() };
+            for (Integer[] coords : item) {
+                getLogger().info("3 blok");
+                if (Arrays.equals(coords, x)) {
+
+                    event.setCancelled(true);
+                    return;
+                }
+            }
+
+        }
+    }
 
     // Get text from component:
     // PlainTextComponentSerializer.plainText().serialize(component)
+    private ArrayList<String> cooldown = new ArrayList<String>();
+
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent event) {
         Player player = event.getPlayer();
 
         if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
             if (event.getHand() == EquipmentSlot.HAND) {
-                getLogger().info(event.getItem().displayName().toString());
-                if (player.getInventory().getItemInMainHand().hasItemMeta()) {
-                    if (player.getInventory().getItemInMainHand().getItemMeta().hasLore()) {
-                        getLogger().info("ok");
-                        Location loc = event.getClickedBlock().getLocation().add(0, 1, 0);
-                        Location locu = event.getClickedBlock().getLocation();
-                        Block b = loc.getBlock();
-                        Block bu = locu.getBlock();
-                        if (bu.getType() == Material.BLACK_GLAZED_TERRACOTTA
-                                || bu.getType() == Material.RED_GLAZED_TERRACOTTA
-                                || bu.getType() == Material.GREEN_GLAZED_TERRACOTTA
-                                || bu.getType() == Material.BROWN_GLAZED_TERRACOTTA
-                                || bu.getType() == Material.BLUE_GLAZED_TERRACOTTA
-                                || bu.getType() == Material.PURPLE_GLAZED_TERRACOTTA
-                                || bu.getType() == Material.CYAN_GLAZED_TERRACOTTA
-                                || bu.getType() == Material.LIGHT_GRAY_GLAZED_TERRACOTTA
-                                || bu.getType() == Material.GRAY_GLAZED_TERRACOTTA
-                                || bu.getType() == Material.PINK_GLAZED_TERRACOTTA
-                                || bu.getType() == Material.ORANGE_GLAZED_TERRACOTTA
-                                || bu.getType() == Material.MAGENTA_GLAZED_TERRACOTTA
-                                || bu.getType() == Material.WHITE_GLAZED_TERRACOTTA
-                                || bu.getType() == Material.LIME_GLAZED_TERRACOTTA
-                                || bu.getType() == Material.YELLOW_GLAZED_TERRACOTTA
-                                || bu.getType() == Material.LIGHT_BLUE_GLAZED_TERRACOTTA) {
-                            // player.sendMessage(Component.text("Oh Noes! You Cannot Place a Conveyor
-                            // Directly Ontop Of Another!").color(TextColor.color(222, 53, 53)));
-                            return;
-                        }
-                        getLogger().info("running");
+                if (cooldown.contains(player.getName())) {
+                    return;
+                }
+                cooldown.add(player.getName());
+                this.getServer().getScheduler().scheduleSyncDelayedTask(this, new Runnable() {
 
-                        if (createConveyorItem("Basic Conveyor", "#a8a8a8", "1").getItemMeta().equals(player
-                                .getInventory()
-                                .getItemInMainHand().getItemMeta())) {
-                            b.setType(Material.BLACK_GLAZED_TERRACOTTA);
-                            BlockData bloc = b.getBlockData();
-                            ((Directional) bloc).setFacing(player.getFacing().getOppositeFace());
-                            b.setBlockData(bloc);
-                            ItemStack paper = player.getInventory().getItemInMainHand();
-                            paper.setAmount(paper.getAmount() - 1);
-                            player.getInventory().setItemInMainHand(paper);
-                        } else if (createConveyorItem("Simple Conveyor", "#a8a8a8", "1.6").getItemMeta().equals(player
-                                .getInventory().getItemInMainHand().getItemMeta())) {
-                            b.setType(Material.RED_GLAZED_TERRACOTTA);
-                            BlockData bloc = b.getBlockData();
-                            ((Directional) bloc).setFacing(player.getFacing().getOppositeFace());
-                            b.setBlockData(bloc);
-                            ItemStack paper = player.getInventory().getItemInMainHand();
-                            paper.setAmount(paper.getAmount() - 1);
-                            player.getInventory().setItemInMainHand(paper);
-                        } else if (createConveyorItem("Very Slow Conveyor", "#a8a8a8", "2").getItemMeta().equals(player
-                                .getInventory().getItemInMainHand().getItemMeta())) {
-                            b.setType(Material.GREEN_GLAZED_TERRACOTTA);
-                            BlockData bloc = b.getBlockData();
-                            ((Directional) bloc).setFacing(player.getFacing().getOppositeFace());
-                            b.setBlockData(bloc);
-                            ItemStack paper = player.getInventory().getItemInMainHand();
-                            paper.setAmount(paper.getAmount() - 1);
-                            player.getInventory().setItemInMainHand(paper);
-                        } else if (createConveyorItem("Slow Conveyor", "#a8a8a8", "3").getItemMeta().equals(player
-                                .getInventory().getItemInMainHand().getItemMeta())) {
-                            b.setType(Material.BROWN_GLAZED_TERRACOTTA);
-                            BlockData bloc = b.getBlockData();
-                            ((Directional) bloc).setFacing(player.getFacing().getOppositeFace());
-                            b.setBlockData(bloc);
-                            ItemStack paper = player.getInventory().getItemInMainHand();
-                            paper.setAmount(paper.getAmount() - 1);
-                            player.getInventory().setItemInMainHand(paper);
-                        } else if (createConveyorItem("Ancient Conveyor", "#a8a8a8", "3.6").getItemMeta().equals(player
-                                .getInventory().getItemInMainHand().getItemMeta())) {
-                            b.setType(Material.BLUE_GLAZED_TERRACOTTA);
-                            BlockData bloc = b.getBlockData();
-                            ((Directional) bloc).setFacing(player.getFacing().getOppositeFace());
-                            b.setBlockData(bloc);
-                            ItemStack paper = player.getInventory().getItemInMainHand();
-                            paper.setAmount(paper.getAmount() - 1);
-                            player.getInventory().setItemInMainHand(paper);
-                        } else if (createConveyorItem("Solar Conveyor", "#a8a8a8", "4.4").getItemMeta().equals(player
-                                .getInventory().getItemInMainHand().getItemMeta())) {
-                            b.setType(Material.PURPLE_GLAZED_TERRACOTTA);
-                            BlockData bloc = b.getBlockData();
-                            ((Directional) bloc).setFacing(player.getFacing().getOppositeFace());
-                            b.setBlockData(bloc);
-                            ItemStack paper = player.getInventory().getItemInMainHand();
-                            paper.setAmount(paper.getAmount() - 1);
-                            player.getInventory().setItemInMainHand(paper);
-                        } else if (createConveyorItem("Industrial Conveyor", "#a8a8a8", "5.2").getItemMeta()
-                                .equals(player
-                                        .getInventory().getItemInMainHand().getItemMeta())) {
-                            b.setType(Material.CYAN_GLAZED_TERRACOTTA);
-                            BlockData bloc = b.getBlockData();
-                            ((Directional) bloc).setFacing(player.getFacing().getOppositeFace());
-                            b.setBlockData(bloc);
-                            ItemStack paper = player.getInventory().getItemInMainHand();
-                            paper.setAmount(paper.getAmount() - 1);
-                            player.getInventory().setItemInMainHand(paper);
-                        } else if (createConveyorItem("Millitary-Grade Conveyor", "#a8a8a8", "6").getItemMeta()
-                                .equals(player
-                                        .getInventory().getItemInMainHand().getItemMeta())) {
-                            b.setType(Material.LIGHT_GRAY_GLAZED_TERRACOTTA);
-                            BlockData bloc = b.getBlockData();
-                            ((Directional) bloc).setFacing(player.getFacing().getOppositeFace());
-                            b.setBlockData(bloc);
-                            ItemStack paper = player.getInventory().getItemInMainHand();
-                            paper.setAmount(paper.getAmount() - 1);
-                            player.getInventory().setItemInMainHand(paper);
-                        } else if (createConveyorItem("Hydraulic Conveyor", "#a8a8a8", "6.8").getItemMeta()
-                                .equals(player
-                                        .getInventory().getItemInMainHand().getItemMeta())) {
-                            b.setType(Material.GRAY_GLAZED_TERRACOTTA);
-                            BlockData bloc = b.getBlockData();
-                            ((Directional) bloc).setFacing(player.getFacing().getOppositeFace());
-                            b.setBlockData(bloc);
-                            ItemStack paper = player.getInventory().getItemInMainHand();
-                            paper.setAmount(paper.getAmount() - 1);
-                            player.getInventory().setItemInMainHand(paper);
-                        } else if (createConveyorItem("Nuclear Conveyor", "#a8a8a8", "7.6").getItemMeta().equals(player
-                                .getInventory().getItemInMainHand().getItemMeta())) {
-                            b.setType(Material.PINK_GLAZED_TERRACOTTA);
-                            BlockData bloc = b.getBlockData();
-                            ((Directional) bloc).setFacing(player.getFacing().getOppositeFace());
-                            b.setBlockData(bloc);
-                            ItemStack paper = player.getInventory().getItemInMainHand();
-                            paper.setAmount(paper.getAmount() - 1);
-                            player.getInventory().setItemInMainHand(paper);
-                        } else if (createConveyorItem("Molten Conveyor", "#a8a8a8", "8.4").getItemMeta().equals(player
-                                .getInventory().getItemInMainHand().getItemMeta())) {
-                            b.setType(Material.ORANGE_GLAZED_TERRACOTTA);
-                            BlockData bloc = b.getBlockData();
-                            ((Directional) bloc).setFacing(player.getFacing().getOppositeFace());
-                            b.setBlockData(bloc);
-                            ItemStack paper = player.getInventory().getItemInMainHand();
-                            paper.setAmount(paper.getAmount() - 1);
-                            player.getInventory().setItemInMainHand(paper);
-                        } else if (createConveyorItem("Nuclear Fusion Conveyor", "#a8a8a8", "9.2").getItemMeta()
-                                .equals(player
-                                        .getInventory().getItemInMainHand().getItemMeta())) {
-                            b.setType(Material.MAGENTA_GLAZED_TERRACOTTA);
-                            BlockData bloc = b.getBlockData();
-                            ((Directional) bloc).setFacing(player.getFacing().getOppositeFace());
-                            b.setBlockData(bloc);
-                            ItemStack paper = player.getInventory().getItemInMainHand();
-                            paper.setAmount(paper.getAmount() - 1);
-                            player.getInventory().setItemInMainHand(paper);
-                        } else if (createConveyorItem("Plasma Conveyor", "#a8a8a8", "10").getItemMeta().equals(player
-                                .getInventory().getItemInMainHand().getItemMeta())) {
-                            b.setType(Material.WHITE_GLAZED_TERRACOTTA);
-                            BlockData bloc = b.getBlockData();
-                            ((Directional) bloc).setFacing(player.getFacing().getOppositeFace());
-                            b.setBlockData(bloc);
-                            ItemStack paper = player.getInventory().getItemInMainHand();
-                            paper.setAmount(paper.getAmount() - 1);
-                            player.getInventory().setItemInMainHand(paper);
-                        } else if (createConveyorItem("Communist Conveyor", "#a8a8a8", "10.4").getItemMeta()
-                                .equals(player
-                                        .getInventory().getItemInMainHand().getItemMeta())) {
-                            b.setType(Material.LIME_GLAZED_TERRACOTTA);
-                            BlockData bloc = b.getBlockData();
-                            ((Directional) bloc).setFacing(player.getFacing().getOppositeFace());
-                            b.setBlockData(bloc);
-                            ItemStack paper = player.getInventory().getItemInMainHand();
-                            paper.setAmount(paper.getAmount() - 1);
-                            player.getInventory().setItemInMainHand(paper);
-                        } else if (createConveyorItem("Superior Communist Conveyor", "#a8a8a8", "11.6")
-                                .getItemMeta() == player.getInventory().getItemInMainHand().getItemMeta().lore()) {
-                            b.setType(Material.YELLOW_GLAZED_TERRACOTTA);
-                            BlockData bloc = b.getBlockData();
-                            ((Directional) bloc).setFacing(player.getFacing().getOppositeFace());
-                            b.setBlockData(bloc);
-                            ItemStack paper = player.getInventory().getItemInMainHand();
-                            paper.setAmount(paper.getAmount() - 1);
-                            player.getInventory().setItemInMainHand(paper);
-                        } else if (createConveyorItem("Godly Communist Conveyor", "#a8a8a8", "13.6").getItemMeta()
-                                .equals(player
-                                        .getInventory().getItemInMainHand().getItemMeta())) {
-                            b.setType(Material.LIGHT_BLUE_GLAZED_TERRACOTTA);
-                            BlockData bloc = b.getBlockData();
-                            ((Directional) bloc).setFacing(player.getFacing().getOppositeFace());
-                            b.setBlockData(bloc);
-                            ItemStack paper = player.getInventory().getItemInMainHand();
-                            paper.setAmount(paper.getAmount() - 1);
-                            player.getInventory().setItemInMainHand(paper);
-                        }
+                    public void run() {
+                        cooldown.remove(player.getName());
+                    }
+                }, 4L);
+            }
+
+            if (player.getInventory().getItemInMainHand().hasItemMeta()) {
+                if (player.getInventory().getItemInMainHand().getItemMeta().hasLore()) {
+                    Block b = event.getClickedBlock().getRelative(event.getBlockFace());
+                    if (createConveyorItem("Basic Conveyor", "#a8a8a8", "1").getItemMeta().equals(player
+                            .getInventory()
+                            .getItemInMainHand().getItemMeta())) {
+                        b.setType(Material.BLACK_GLAZED_TERRACOTTA);
+                        BlockData bloc = b.getBlockData();
+                        ((Directional) bloc).setFacing(player.getFacing().getOppositeFace());
+                        b.setBlockData(bloc);
+                        ItemStack paper = player.getInventory().getItemInMainHand();
+                        paper.setAmount(paper.getAmount() - 1);
+                        player.getInventory().setItemInMainHand(paper);
+                    } else if (createConveyorItem("Simple Conveyor", "#a8a8a8", "1.6").getItemMeta().equals(player
+                            .getInventory().getItemInMainHand().getItemMeta())) {
+                        b.setType(Material.RED_GLAZED_TERRACOTTA);
+                        BlockData bloc = b.getBlockData();
+                        ((Directional) bloc).setFacing(player.getFacing().getOppositeFace());
+                        b.setBlockData(bloc);
+                        ItemStack paper = player.getInventory().getItemInMainHand();
+                        paper.setAmount(paper.getAmount() - 1);
+                        player.getInventory().setItemInMainHand(paper);
+                    } else if (createConveyorItem("Very Slow Conveyor", "#a8a8a8", "2").getItemMeta().equals(player
+                            .getInventory().getItemInMainHand().getItemMeta())) {
+                        b.setType(Material.GREEN_GLAZED_TERRACOTTA);
+                        BlockData bloc = b.getBlockData();
+                        ((Directional) bloc).setFacing(player.getFacing().getOppositeFace());
+                        b.setBlockData(bloc);
+                        ItemStack paper = player.getInventory().getItemInMainHand();
+                        paper.setAmount(paper.getAmount() - 1);
+                        player.getInventory().setItemInMainHand(paper);
+                    } else if (createConveyorItem("Slow Conveyor", "#a8a8a8", "3").getItemMeta().equals(player
+                            .getInventory().getItemInMainHand().getItemMeta())) {
+                        b.setType(Material.BROWN_GLAZED_TERRACOTTA);
+                        BlockData bloc = b.getBlockData();
+                        ((Directional) bloc).setFacing(player.getFacing().getOppositeFace());
+                        b.setBlockData(bloc);
+                        ItemStack paper = player.getInventory().getItemInMainHand();
+                        paper.setAmount(paper.getAmount() - 1);
+                        player.getInventory().setItemInMainHand(paper);
+                    } else if (createConveyorItem("Ancient Conveyor", "#a8a8a8", "3.6").getItemMeta().equals(player
+                            .getInventory().getItemInMainHand().getItemMeta())) {
+                        b.setType(Material.BLUE_GLAZED_TERRACOTTA);
+                        BlockData bloc = b.getBlockData();
+                        ((Directional) bloc).setFacing(player.getFacing().getOppositeFace());
+                        b.setBlockData(bloc);
+                        ItemStack paper = player.getInventory().getItemInMainHand();
+                        paper.setAmount(paper.getAmount() - 1);
+                        player.getInventory().setItemInMainHand(paper);
+                    } else if (createConveyorItem("Solar Conveyor", "#a8a8a8", "4.4").getItemMeta().equals(player
+                            .getInventory().getItemInMainHand().getItemMeta())) {
+                        b.setType(Material.PURPLE_GLAZED_TERRACOTTA);
+                        BlockData bloc = b.getBlockData();
+                        ((Directional) bloc).setFacing(player.getFacing().getOppositeFace());
+                        b.setBlockData(bloc);
+                        ItemStack paper = player.getInventory().getItemInMainHand();
+                        paper.setAmount(paper.getAmount() - 1);
+                        player.getInventory().setItemInMainHand(paper);
+                    } else if (createConveyorItem("Industrial Conveyor", "#a8a8a8", "5.2").getItemMeta()
+                            .equals(player
+                                    .getInventory().getItemInMainHand().getItemMeta())) {
+                        b.setType(Material.CYAN_GLAZED_TERRACOTTA);
+                        BlockData bloc = b.getBlockData();
+                        ((Directional) bloc).setFacing(player.getFacing().getOppositeFace());
+                        b.setBlockData(bloc);
+                        ItemStack paper = player.getInventory().getItemInMainHand();
+                        paper.setAmount(paper.getAmount() - 1);
+                        player.getInventory().setItemInMainHand(paper);
+                    } else if (createConveyorItem("Millitary-Grade Conveyor", "#a8a8a8", "6").getItemMeta()
+                            .equals(player
+                                    .getInventory().getItemInMainHand().getItemMeta())) {
+                        b.setType(Material.LIGHT_GRAY_GLAZED_TERRACOTTA);
+                        BlockData bloc = b.getBlockData();
+                        ((Directional) bloc).setFacing(player.getFacing().getOppositeFace());
+                        b.setBlockData(bloc);
+                        ItemStack paper = player.getInventory().getItemInMainHand();
+                        paper.setAmount(paper.getAmount() - 1);
+                        player.getInventory().setItemInMainHand(paper);
+                    } else if (createConveyorItem("Hydraulic Conveyor", "#a8a8a8", "6.8").getItemMeta()
+                            .equals(player
+                                    .getInventory().getItemInMainHand().getItemMeta())) {
+                        b.setType(Material.GRAY_GLAZED_TERRACOTTA);
+                        BlockData bloc = b.getBlockData();
+                        ((Directional) bloc).setFacing(player.getFacing().getOppositeFace());
+                        b.setBlockData(bloc);
+                        ItemStack paper = player.getInventory().getItemInMainHand();
+                        paper.setAmount(paper.getAmount() - 1);
+                        player.getInventory().setItemInMainHand(paper);
+                    } else if (createConveyorItem("Nuclear Conveyor", "#a8a8a8", "7.6").getItemMeta().equals(player
+                            .getInventory().getItemInMainHand().getItemMeta())) {
+                        b.setType(Material.PINK_GLAZED_TERRACOTTA);
+                        BlockData bloc = b.getBlockData();
+                        ((Directional) bloc).setFacing(player.getFacing().getOppositeFace());
+                        b.setBlockData(bloc);
+                        ItemStack paper = player.getInventory().getItemInMainHand();
+                        paper.setAmount(paper.getAmount() - 1);
+                        player.getInventory().setItemInMainHand(paper);
+                    } else if (createConveyorItem("Molten Conveyor", "#a8a8a8", "8.4").getItemMeta().equals(player
+                            .getInventory().getItemInMainHand().getItemMeta())) {
+                        b.setType(Material.ORANGE_GLAZED_TERRACOTTA);
+                        BlockData bloc = b.getBlockData();
+                        ((Directional) bloc).setFacing(player.getFacing().getOppositeFace());
+                        b.setBlockData(bloc);
+                        ItemStack paper = player.getInventory().getItemInMainHand();
+                        paper.setAmount(paper.getAmount() - 1);
+                        player.getInventory().setItemInMainHand(paper);
+                    } else if (createConveyorItem("Nuclear Fusion Conveyor", "#a8a8a8", "9.2").getItemMeta()
+                            .equals(player
+                                    .getInventory().getItemInMainHand().getItemMeta())) {
+                        b.setType(Material.MAGENTA_GLAZED_TERRACOTTA);
+                        BlockData bloc = b.getBlockData();
+                        ((Directional) bloc).setFacing(player.getFacing().getOppositeFace());
+                        b.setBlockData(bloc);
+                        ItemStack paper = player.getInventory().getItemInMainHand();
+                        paper.setAmount(paper.getAmount() - 1);
+                        player.getInventory().setItemInMainHand(paper);
+                    } else if (createConveyorItem("Plasma Conveyor", "#a8a8a8", "10").getItemMeta().equals(player
+                            .getInventory().getItemInMainHand().getItemMeta())) {
+                        b.setType(Material.WHITE_GLAZED_TERRACOTTA);
+                        BlockData bloc = b.getBlockData();
+                        ((Directional) bloc).setFacing(player.getFacing().getOppositeFace());
+                        b.setBlockData(bloc);
+                        ItemStack paper = player.getInventory().getItemInMainHand();
+                        paper.setAmount(paper.getAmount() - 1);
+                        player.getInventory().setItemInMainHand(paper);
+                    } else if (createConveyorItem("Communist Conveyor", "#a8a8a8", "10.4").getItemMeta()
+                            .equals(player
+                                    .getInventory().getItemInMainHand().getItemMeta())) {
+                        b.setType(Material.LIME_GLAZED_TERRACOTTA);
+                        BlockData bloc = b.getBlockData();
+                        ((Directional) bloc).setFacing(player.getFacing().getOppositeFace());
+                        b.setBlockData(bloc);
+                        ItemStack paper = player.getInventory().getItemInMainHand();
+                        paper.setAmount(paper.getAmount() - 1);
+                        player.getInventory().setItemInMainHand(paper);
+                    } else if (createConveyorItem("Superior Communist Conveyor", "#a8a8a8", "11.6")
+                            .getItemMeta() == player.getInventory().getItemInMainHand().getItemMeta().lore()) {
+                        b.setType(Material.YELLOW_GLAZED_TERRACOTTA);
+                        BlockData bloc = b.getBlockData();
+                        ((Directional) bloc).setFacing(player.getFacing().getOppositeFace());
+                        b.setBlockData(bloc);
+                        ItemStack paper = player.getInventory().getItemInMainHand();
+                        paper.setAmount(paper.getAmount() - 1);
+                        player.getInventory().setItemInMainHand(paper);
+                    } else if (createConveyorItem("Godly Communist Conveyor", "#a8a8a8", "13.6").getItemMeta()
+                            .equals(player
+                                    .getInventory().getItemInMainHand().getItemMeta())) {
+                        b.setType(Material.LIGHT_BLUE_GLAZED_TERRACOTTA);
+                        BlockData bloc = b.getBlockData();
+                        ((Directional) bloc).setFacing(player.getFacing().getOppositeFace());
+                        b.setBlockData(bloc);
+                        ItemStack paper = player.getInventory().getItemInMainHand();
+                        paper.setAmount(paper.getAmount() - 1);
+                        player.getInventory().setItemInMainHand(paper);
+                    }
+
+                    // Droppers Are Below Here Now
+
+                    else if (createDropperItem("Basic Dropper", "#a8a8a8", "$13.6").getItemMeta()
+                            .equals(player
+                                    .getInventory().getItemInMainHand().getItemMeta())) {
+                        placeDropper(player, b, Material.LIGHT_BLUE_WOOL);
 
                     }
+
                 }
             }
         }
@@ -452,15 +622,12 @@ public class App extends JavaPlugin implements Listener {
             player.getInventory().addItem(createConveyorItem("Communist Conveyor", "#a8a8a8", "10.4"));
             player.getInventory().addItem(createConveyorItem("Superior Communist Conveyor", "#a8a8a8", "11.6"));
             player.getInventory().addItem(createConveyorItem("Godly Communist Conveyor", "#a8a8a8", "13.6"));
+            player.getInventory().addItem(createDropperItem("Basic Dropper", "#a8a8a8", "$13.6"));
 
             player.sendMessage("Given Player Item");
         }
 
         return false;
-    }
-
-    public Conveyors getTpsCounter() {
-        return new Conveyors();
     }
 
     class EntitySearch implements Runnable {
