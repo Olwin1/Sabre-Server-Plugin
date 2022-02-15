@@ -56,11 +56,6 @@ public class App extends JavaPlugin implements Listener {
     private Map<String, Database> databases = new HashMap<String, Database>();
     public static App INSTANCE;
 
-    public App() {
-
-        getLogger().info("2");
-
-    }
 
     static ArrayList<String> playerName = new ArrayList<String>();
     static ArrayList<ArrayList<Integer[]>> bellLocations = new ArrayList<ArrayList<Integer[]>>();
@@ -69,10 +64,8 @@ public class App extends JavaPlugin implements Listener {
     public void onEnable() {
         INSTANCE = this;
         this.getDataFolder().mkdirs();
-        getLogger().info("d");
         initializeDatabase("blankplugin",
                 "CREATE TABLE IF NOT EXISTS gens (uuid VARCHAR(36), gen_x INTEGER[], gen_y INTEGER[], gen_z INTEGER[]);");
-        getLogger().info("d");
 
         Collection<? extends Player> players = this.getServer().getOnlinePlayers();
         for (Player player : players) {
@@ -111,22 +104,16 @@ public class App extends JavaPlugin implements Listener {
     }
 
     public void initializeDatabase(final String databaseName, final String createStatement) {
-        getLogger().info(databaseName + createStatement);
         final Database db = new SQLite(databaseName, createStatement, this.getDataFolder());
-        getLogger().info("7");
         db.load();
-        getLogger().info("8");
         this.databases.put(databaseName, db);
-        getLogger().info("7");
     }
 
     public Map<String, Database> getDatabases() {
-        getLogger().info("12");
         return this.databases;
     }
 
     public Database getDatabase(final String databaseName) {
-        getLogger().info("1");
         return this.getDatabases().get(databaseName);
     }
 
@@ -240,7 +227,6 @@ public class App extends JavaPlugin implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onBlockBreak(BlockBreakEvent event) {
-        getLogger().info("1 blok");
         for (ArrayList<Integer[]> item : bellLocations) {
             Location location = event.getBlock().getLocation();
             Block tempBlockW = event.getBlock().getRelative(BlockFace.EAST);
@@ -313,7 +299,6 @@ public class App extends JavaPlugin implements Listener {
 
             Integer[] x = { location.getBlockX(), location.getBlockY(), location.getBlockZ() };
             for (Integer[] coords : item) {
-                getLogger().info("3 blok");
                 if (Arrays.equals(coords, x)) {
 
                     event.setCancelled(true);
@@ -547,7 +532,6 @@ public class App extends JavaPlugin implements Listener {
             player.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_RED + "RandomTeleport" + ChatColor.GRAY + "]:"
                     + ChatColor.GOLD + "Plugin is developed by: " + ChatColor.GREEN + "Novial" + ChatColor.GOLD + "!");
             player.sendMessage("");
-            getLogger().info("loaded conveyor");
             World world = Bukkit.getWorld("world");
             Collection<Item> items = world.getEntitiesByClass(Item.class);
             /* Bukkit.getScheduler().runTaskTimer(this, () -> { */while (items.iterator().hasNext()) {
