@@ -50,6 +50,8 @@ import java.util.HashMap;
 import dev.cibmc.spigot.blankplugin.DB.Database.Database;
 import java.util.Map;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 
 public class App extends JavaPlugin implements Listener {
     File file = new File("./config/", "blockSpeedConfig.yml");
@@ -257,12 +259,112 @@ else {
                 // Execution failure.
             }
         }
+        else {
+            if(database.executeStatement("UPDATE gens SET gen_x = '{" + x + "}',gen_y = '{" + y + "}', gen_z = '{" + z + "}' WHERE uuid=\"" + player.getUniqueId().toString() + "\";")) {
+                //Execution Successfull
+            }
+            else {
+                getLogger().info("errores");
+            }
+        }
         for (Object obj : results){
         String ID = (String)obj;
         getLogger().info("ID: "+ID);
         }
         getLogger().info("See you again, SpigotMC!");
     }}
+
+    @EventHandler
+public void onPlayerJoin(PlayerJoinEvent event) {
+    Player player = event.getPlayer();
+    getLogger().info(player.getUniqueId().toString());
+    List<Object> results = getDatabase("blankplugin").queryRowThree("SELECT * FROM gens WHERE uuid=\"" + player.getUniqueId().toString() + "\"", "gen_x", "gen_y", "gen_z");
+    playerName.add(player.getName());
+    if(results != null) {
+        ArrayList<Integer> x =  new ArrayList<Integer>();
+        ArrayList<Integer> y =  new ArrayList<Integer>();
+        ArrayList<Integer> z =  new ArrayList<Integer>();
+        
+        Integer iter = 0;
+    for (Object obj : results){
+        ArrayList<Integer> arr =  new ArrayList<Integer>();
+        String str = (String)obj;
+        str = StringUtils.chop(str).substring(1);
+        String[] f = str.split(",");
+        for(String i : f) {
+            arr.add(Integer.parseInt(i));
+        }
+        getLogger().info("ID: "+arr.toString() + "iter:" + iter);
+        if(iter == 0) {
+            x = arr;
+        }
+        if(iter == 1) {
+            y = arr;
+        }
+        if(iter == 2) {
+            z = arr;
+        }
+        iter++;
+        }
+    ArrayList<Integer[]> coords = new ArrayList<Integer[]>();
+    
+    for( int i = 0; i <= x.size() - 1; i++) {
+        Integer[] temp = {x.get(i), y.get(i), z.get(i)};
+        coords.add(temp);
+    }
+    bellLocations.add(coords);
+{
+// get element number 0 and 1 and put it in a variable, 
+// and the next time get element      1 and 2 and put this in another variable. 
+}}
+else {
+    ArrayList<Integer[]> inner = new ArrayList<Integer[]>();
+
+    bellLocations.add(inner);
+}
+
+}
+
+@EventHandler
+public void onPlayerQuit(PlayerQuitEvent event) {
+    Player player = event.getPlayer();
+    List<Object> results = database.queryRow("SELECT * FROM gens WHERE uuid=\"" + player.getUniqueId().toString() + "\"", "gen_x");
+    getLogger().info("Is");
+    getLogger().info(String.valueOf(results.size()));
+    int index = playerName.indexOf(player.getName());
+    ArrayList<Integer[]> locations = bellLocations.get(index);
+    playerName.remove(index);
+    bellLocations.remove(index);
+    String x = "";
+    String y = "";
+    String z = "";
+    for(Integer[] coords : locations) {
+        x = x + String.valueOf(coords[0]) + ",";
+        y = y + String.valueOf(coords[1]) + ",";
+        z = z + String.valueOf(coords[2]) + ",";
+    }
+    if(results.size() == 0) {
+        if (database.executeStatement("INSERT INTO gens (uuid, gen_x, gen_y, gen_z) VALUES(\"" + player.getUniqueId().toString() + "\", '{" + x + "}', '{" + y + "}', '{" + z + "}');")){
+            // Executed statement successfully
+        }else{
+            getLogger().info("errores");
+            // Execution failure.
+        }
+    }
+    else {
+        if(database.executeStatement("UPDATE gens SET gen_x = '{" + x + "}',gen_y = '{" + y + "}', gen_z = '{" + z + "}' WHERE uuid=\"" + player.getUniqueId().toString() + "\";")) {
+            //Execution Successfull
+        }
+        else {
+            getLogger().info("errores");
+        }
+    }
+    for (Object obj : results){
+    String ID = (String)obj;
+    getLogger().info("ID: "+ID);
+    }
+    getLogger().info("See you again, SpigotMC!");
+}
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onMoveEvent(PlayerMoveEvent event) {
