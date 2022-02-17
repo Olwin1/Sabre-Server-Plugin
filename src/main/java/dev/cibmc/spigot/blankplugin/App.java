@@ -1,6 +1,7 @@
 package dev.cibmc.spigot.blankplugin;
 
 import org.bukkit.plugin.java.JavaPlugin;
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -59,6 +60,7 @@ public class App extends JavaPlugin implements Listener {
 
     static ArrayList<String> playerName = new ArrayList<String>();
     static ArrayList<ArrayList<Integer[]>> bellLocations = new ArrayList<ArrayList<Integer[]>>();
+    static Database database;
 
     @Override
     public void onEnable() {
@@ -68,10 +70,53 @@ public class App extends JavaPlugin implements Listener {
                 "CREATE TABLE IF NOT EXISTS gens (uuid VARCHAR(36), gen_x INTEGER[], gen_y INTEGER[], gen_z INTEGER[]);");
 
         Collection<? extends Player> players = this.getServer().getOnlinePlayers();
+        database = getDatabase("blankplugin");
         for (Player player : players) {
+            getLogger().info(player.getUniqueId().toString());
+            List<Object> results = getDatabase("blankplugin").queryRowThree("SELECT * FROM gens WHERE uuid=\"" + player.getUniqueId().toString() + "\"", "gen_x", "gen_y", "gen_z");
             playerName.add(player.getName());
+            if(results != null) {
+                ArrayList<Integer> x =  new ArrayList<Integer>();
+                ArrayList<Integer> y =  new ArrayList<Integer>();
+                ArrayList<Integer> z =  new ArrayList<Integer>();
+                
+                Integer iter = 0;
+            for (Object obj : results){
+                ArrayList<Integer> arr =  new ArrayList<Integer>();
+                String str = (String)obj;
+                str = StringUtils.chop(str).substring(1);
+                String[] f = str.split(",");
+                for(String i : f) {
+                    arr.add(Integer.parseInt(i));
+                }
+                getLogger().info("ID: "+arr.toString() + "iter:" + iter);
+                if(iter == 0) {
+                    x = arr;
+                }
+                if(iter == 1) {
+                    y = arr;
+                }
+                if(iter == 2) {
+                    z = arr;
+                }
+                iter++;
+                }
+            ArrayList<Integer[]> coords = new ArrayList<Integer[]>();
+            
+            for( int i = 0; i <= x.size() - 1; i++) {
+                Integer[] temp = {x.get(i), y.get(i), z.get(i)};
+                coords.add(temp);
+            }
+            bellLocations.add(coords);
+{
+    // get element number 0 and 1 and put it in a variable, 
+    // and the next time get element      1 and 2 and put this in another variable. 
+}}
+else {
             ArrayList<Integer[]> inner = new ArrayList<Integer[]>();
+
             bellLocations.add(inner);
+}
         }
 
         Bukkit.getServer().getPluginManager().registerEvents(this, this);
@@ -155,7 +200,7 @@ public class App extends JavaPlugin implements Listener {
         return createItem(Material.PAPER, 1, name, nameColour, lore);
     }
 
-    static void placeDropper(Player player, Block b, Material mat) {
+    void placeDropper(Player player, Block b, Material mat) {
         Block b2 = b.getRelative(BlockFace.UP);
         BlockFace dir = player.getFacing();
         Block b3 = b2.getRelative(dir);
@@ -185,12 +230,39 @@ public class App extends JavaPlugin implements Listener {
         Integer[] coordinates = { bellLocation.getBlockX(), bellLocation.getBlockY(), bellLocation.getBlockZ() };
         list.add(coordinates);
         bellLocations.set(index, list);
+
     }
 
     @Override
     public void onDisable() {
+        for(Player player : this.getServer().getOnlinePlayers()){
+        List<Object> results = database.queryRow("SELECT * FROM gens WHERE uuid=\"" + player.getUniqueId().toString() + "\"", "gen_x");
+        getLogger().info("Is");
+        getLogger().info(String.valueOf(results.size()));
+        Integer index = playerName.indexOf(player.getName());
+        ArrayList<Integer[]> locations = bellLocations.get(index);
+        String x = "";
+        String y = "";
+        String z = "";
+        for(Integer[] coords : locations) {
+            x = x + String.valueOf(coords[0]) + ",";
+            y = y + String.valueOf(coords[1]) + ",";
+            z = z + String.valueOf(coords[2]) + ",";
+        }
+        if(results.size() == 0) {
+            if (database.executeStatement("INSERT INTO gens (uuid, gen_x, gen_y, gen_z) VALUES(\"" + player.getUniqueId().toString() + "\", '{" + x + "}', '{" + y + "}', '{" + z + "}');")){
+                // Executed statement successfully
+            }else{
+                getLogger().info("errores");
+                // Execution failure.
+            }
+        }
+        for (Object obj : results){
+        String ID = (String)obj;
+        getLogger().info("ID: "+ID);
+        }
         getLogger().info("See you again, SpigotMC!");
-    }
+    }}
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onMoveEvent(PlayerMoveEvent event) {
@@ -241,21 +313,21 @@ public class App extends JavaPlugin implements Listener {
                 }
             }
 
-            else if (tempBlockE.getType() == Material.BELL) {
+            if (tempBlockE.getType() == Material.BELL) {
                 Directional direction = (Directional) tempBlockE.getBlockData();
                 if (direction.getFacing() == BlockFace.EAST) {
                     location = tempBlockE.getLocation();
                 }
             }
 
-            else if (tempBlockN.getType() == Material.BELL) {
+            if (tempBlockN.getType() == Material.BELL) {
                 Directional direction = (Directional) tempBlockN.getBlockData();
                 if (direction.getFacing() == BlockFace.NORTH) {
                     location = tempBlockN.getLocation();
                 }
             }
 
-            else if (tempBlockS.getType() == Material.BELL) {
+            if (tempBlockS.getType() == Material.BELL) {
                 Directional direction = (Directional) tempBlockS.getBlockData();
                 if (direction.getFacing() == BlockFace.SOUTH) {
                     location = tempBlockS.getLocation();
@@ -276,21 +348,21 @@ public class App extends JavaPlugin implements Listener {
                 }
             }
 
-            else if (tempBlockE.getType() == Material.BELL) {
+            if (tempBlockE.getType() == Material.BELL) {
                 Directional direction = (Directional) tempBlockE.getBlockData();
                 if (direction.getFacing() == BlockFace.EAST) {
                     location = tempBlockE.getLocation();
                 }
             }
 
-            else if (tempBlockN.getType() == Material.BELL) {
+            if (tempBlockN.getType() == Material.BELL) {
                 Directional direction = (Directional) tempBlockN.getBlockData();
                 if (direction.getFacing() == BlockFace.NORTH) {
                     location = tempBlockN.getLocation();
                 }
             }
 
-            else if (tempBlockS.getType() == Material.BELL) {
+            if (tempBlockS.getType() == Material.BELL) {
                 Directional direction = (Directional) tempBlockS.getBlockData();
                 if (direction.getFacing() == BlockFace.SOUTH) {
                     location = tempBlockS.getLocation();
