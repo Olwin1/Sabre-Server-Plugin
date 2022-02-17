@@ -59,7 +59,6 @@ public class App extends JavaPlugin implements Listener {
     private Map<String, Database> databases = new HashMap<String, Database>();
     public static App INSTANCE;
 
-
     static ArrayList<String> playerName = new ArrayList<String>();
     static ArrayList<ArrayList<Integer[]>> bellLocations = new ArrayList<ArrayList<Integer[]>>();
     static Database database;
@@ -75,50 +74,52 @@ public class App extends JavaPlugin implements Listener {
         database = getDatabase("blankplugin");
         for (Player player : players) {
             getLogger().info(player.getUniqueId().toString());
-            List<Object> results = getDatabase("blankplugin").queryRowThree("SELECT * FROM gens WHERE uuid=\"" + player.getUniqueId().toString() + "\"", "gen_x", "gen_y", "gen_z");
+            List<Object> results = getDatabase("blankplugin").queryRowThree(
+                    "SELECT * FROM gens WHERE uuid=\"" + player.getUniqueId().toString() + "\"", "gen_x", "gen_y",
+                    "gen_z");
             playerName.add(player.getName());
-            if(results != null) {
-                ArrayList<Integer> x =  new ArrayList<Integer>();
-                ArrayList<Integer> y =  new ArrayList<Integer>();
-                ArrayList<Integer> z =  new ArrayList<Integer>();
-                
-                Integer iter = 0;
-            for (Object obj : results){
-                ArrayList<Integer> arr =  new ArrayList<Integer>();
-                String str = (String)obj;
-                str = StringUtils.chop(str).substring(1);
-                String[] f = str.split(",");
-                for(String i : f) {
-                    arr.add(Integer.parseInt(i));
-                }
-                getLogger().info("ID: "+arr.toString() + "iter:" + iter);
-                if(iter == 0) {
-                    x = arr;
-                }
-                if(iter == 1) {
-                    y = arr;
-                }
-                if(iter == 2) {
-                    z = arr;
-                }
-                iter++;
-                }
-            ArrayList<Integer[]> coords = new ArrayList<Integer[]>();
-            
-            for( int i = 0; i <= x.size() - 1; i++) {
-                Integer[] temp = {x.get(i), y.get(i), z.get(i)};
-                coords.add(temp);
-            }
-            bellLocations.add(coords);
-{
-    // get element number 0 and 1 and put it in a variable, 
-    // and the next time get element      1 and 2 and put this in another variable. 
-}}
-else {
-            ArrayList<Integer[]> inner = new ArrayList<Integer[]>();
+            if (results != null) {
+                ArrayList<Integer> x = new ArrayList<Integer>();
+                ArrayList<Integer> y = new ArrayList<Integer>();
+                ArrayList<Integer> z = new ArrayList<Integer>();
 
-            bellLocations.add(inner);
-}
+                Integer iter = 0;
+                for (Object obj : results) {
+                    ArrayList<Integer> arr = new ArrayList<Integer>();
+                    String str = (String) obj;
+                    str = StringUtils.chop(str).substring(1);
+                    String[] f = str.split(",");
+                    for (String i : f) {
+                        arr.add(Integer.parseInt(i));
+                    }
+                    getLogger().info("ID: " + arr.toString() + "iter:" + iter);
+                    if (iter == 0) {
+                        x = arr;
+                    }
+                    if (iter == 1) {
+                        y = arr;
+                    }
+                    if (iter == 2) {
+                        z = arr;
+                    }
+                    iter++;
+                }
+                ArrayList<Integer[]> coords = new ArrayList<Integer[]>();
+
+                for (int i = 0; i <= x.size() - 1; i++) {
+                    Integer[] temp = { x.get(i), y.get(i), z.get(i) };
+                    coords.add(temp);
+                }
+                bellLocations.add(coords);
+                {
+                    // get element number 0 and 1 and put it in a variable,
+                    // and the next time get element 1 and 2 and put this in another variable.
+                }
+            } else {
+                ArrayList<Integer[]> inner = new ArrayList<Integer[]>();
+
+                bellLocations.add(inner);
+            }
         }
 
         Bukkit.getServer().getPluginManager().registerEvents(this, this);
@@ -149,29 +150,38 @@ else {
         }
         new BukkitRunnable() {
             public void run() {
-                for( int i = 0; i <= playerName.size() - 1; i++) {
-                    for(Integer[] location : bellLocations.get(i)) {
+                for (int i = 0; i <= playerName.size() - 1; i++) {
+                    for (Integer[] location : bellLocations.get(i)) {
 
-                
-                World world = Bukkit.getWorld("plots");
+                        World world = Bukkit.getWorld("plots");
 
-                Location coords = new Location(world, location[0], location[1],
-                location[2]);
-                Block bell = coords.getBlock();
-                BlockData bellData = bell.getBlockData();
-                Material t = bell.getRelative(((Directional)bellData).getFacing()).getType();
-                ItemStack preItem = new ItemStack(t, 1);
-                ItemMeta meta = preItem.getItemMeta();
+                        Location coords = new Location(world, location[0], location[1],
+                                location[2]);
+                        Block bell = coords.getBlock();
+                        BlockData bellData = bell.getBlockData();
+                        Material t = bell.getRelative(((Directional) bellData).getFacing()).getType();
+                        ItemStack preItem = new ItemStack(t, 1);
+                        ItemMeta meta = preItem.getItemMeta();
 
+                        meta.displayName(
+                                Component
+                                        .text(nonItalic("Mined "
+                                                + capitalizeWord(
+                                                        preItem.getType().name().replaceAll("_", " ").toLowerCase())))
+                                        .color(TextColor.fromHexString("#8e8e8e")));
+                        preItem.setItemMeta(meta);
+                        Item item = world.dropItem(coords.add(coords, 0.5, -0.5, 0.5), preItem);
+                        item.setVelocity(new Vector());
 
-                meta.displayName(Component.text(ChatColor.RESET + "d" + ChatColor.BOLD + "Mined " + capitalizeWord(preItem.getType().name().replaceAll("_", " ").toLowerCase())).color(TextColor.fromHexString("#8e8e8e")));
-                preItem.setItemMeta(meta);
-                Item item = world.dropItem(coords.add(coords, 0.5, -0.5, 0.5), preItem);
-                item.setVelocity(new Vector());
-
-            }}}
+                    }
+                }
+            }
         }.runTaskTimer(this, 10, 10 * 20);
 
+    }
+
+    public String nonItalic(String string) {
+        return ChatColor.translateAlternateColorCodes('&', ChatColor.GRAY + string);
     }
 
     public void initializeDatabase(final String databaseName, final String createStatement) {
@@ -195,16 +205,17 @@ else {
     public static String color(String s) {
         return ChatColor.translateAlternateColorCodes('&', s);
     }
-    public static String capitalizeWord(String str){  
-        String words[]=str.split("\\s");  
-        String capitalizeWord="";  
-        for(String w:words){  
-            String first=w.substring(0,1);  
-            String afterfirst=w.substring(1);  
-            capitalizeWord+=first.toUpperCase()+afterfirst+" ";  
-        }  
-        return capitalizeWord.trim();  
-    } 
+
+    public static String capitalizeWord(String str) {
+        String words[] = str.split("\\s");
+        String capitalizeWord = "";
+        for (String w : words) {
+            String first = w.substring(0, 1);
+            String afterfirst = w.substring(1);
+            capitalizeWord += first.toUpperCase() + afterfirst + " ";
+        }
+        return capitalizeWord.trim();
+    }
 
     static ItemStack createItem(Material material, Integer amount, String title, String titleColour,
             List<Component> lore) {
@@ -271,134 +282,138 @@ else {
 
     @Override
     public void onDisable() {
-        for(Player player : this.getServer().getOnlinePlayers()){
-        List<Object> results = database.queryRow("SELECT * FROM gens WHERE uuid=\"" + player.getUniqueId().toString() + "\"", "gen_x");
+        for (Player player : this.getServer().getOnlinePlayers()) {
+            List<Object> results = database
+                    .queryRow("SELECT * FROM gens WHERE uuid=\"" + player.getUniqueId().toString() + "\"", "gen_x");
+            getLogger().info("Is");
+            getLogger().info(String.valueOf(results.size()));
+            Integer index = playerName.indexOf(player.getName());
+            ArrayList<Integer[]> locations = bellLocations.get(index);
+            String x = "";
+            String y = "";
+            String z = "";
+            for (Integer[] coords : locations) {
+                x = x + String.valueOf(coords[0]) + ",";
+                y = y + String.valueOf(coords[1]) + ",";
+                z = z + String.valueOf(coords[2]) + ",";
+            }
+            if (results.size() == 0) {
+                if (database.executeStatement("INSERT INTO gens (uuid, gen_x, gen_y, gen_z) VALUES(\""
+                        + player.getUniqueId().toString() + "\", '{" + x + "}', '{" + y + "}', '{" + z + "}');")) {
+                    // Executed statement successfully
+                } else {
+                    getLogger().info("errores");
+                    // Execution failure.
+                }
+            } else {
+                if (database.executeStatement("UPDATE gens SET gen_x = '{" + x + "}',gen_y = '{" + y + "}', gen_z = '{"
+                        + z + "}' WHERE uuid=\"" + player.getUniqueId().toString() + "\";")) {
+                    // Execution Successfull
+                } else {
+                    getLogger().info("errores");
+                }
+            }
+            for (Object obj : results) {
+                String ID = (String) obj;
+                getLogger().info("ID: " + ID);
+            }
+            getLogger().info("See you again, SpigotMC!");
+        }
+    }
+
+    @EventHandler
+    public void onPlayerJoin(PlayerJoinEvent event) {
+        Player player = event.getPlayer();
+        getLogger().info(player.getUniqueId().toString());
+        List<Object> results = getDatabase("blankplugin").queryRowThree(
+                "SELECT * FROM gens WHERE uuid=\"" + player.getUniqueId().toString() + "\"", "gen_x", "gen_y", "gen_z");
+        playerName.add(player.getName());
+        if (results != null) {
+            ArrayList<Integer> x = new ArrayList<Integer>();
+            ArrayList<Integer> y = new ArrayList<Integer>();
+            ArrayList<Integer> z = new ArrayList<Integer>();
+
+            Integer iter = 0;
+            for (Object obj : results) {
+                ArrayList<Integer> arr = new ArrayList<Integer>();
+                String str = (String) obj;
+                str = StringUtils.chop(str).substring(1);
+                String[] f = str.split(",");
+                for (String i : f) {
+                    arr.add(Integer.parseInt(i));
+                }
+                getLogger().info("ID: " + arr.toString() + "iter:" + iter);
+                if (iter == 0) {
+                    x = arr;
+                }
+                if (iter == 1) {
+                    y = arr;
+                }
+                if (iter == 2) {
+                    z = arr;
+                }
+                iter++;
+            }
+            ArrayList<Integer[]> coords = new ArrayList<Integer[]>();
+
+            for (int i = 0; i <= x.size() - 1; i++) {
+                Integer[] temp = { x.get(i), y.get(i), z.get(i) };
+                coords.add(temp);
+            }
+            bellLocations.add(coords);
+            {
+                // get element number 0 and 1 and put it in a variable,
+                // and the next time get element 1 and 2 and put this in another variable.
+            }
+        } else {
+            ArrayList<Integer[]> inner = new ArrayList<Integer[]>();
+
+            bellLocations.add(inner);
+        }
+
+    }
+
+    @EventHandler
+    public void onPlayerQuit(PlayerQuitEvent event) {
+        Player player = event.getPlayer();
+        List<Object> results = database
+                .queryRow("SELECT * FROM gens WHERE uuid=\"" + player.getUniqueId().toString() + "\"", "gen_x");
         getLogger().info("Is");
         getLogger().info(String.valueOf(results.size()));
-        Integer index = playerName.indexOf(player.getName());
+        int index = playerName.indexOf(player.getName());
         ArrayList<Integer[]> locations = bellLocations.get(index);
+        playerName.remove(index);
+        bellLocations.remove(index);
         String x = "";
         String y = "";
         String z = "";
-        for(Integer[] coords : locations) {
+        for (Integer[] coords : locations) {
             x = x + String.valueOf(coords[0]) + ",";
             y = y + String.valueOf(coords[1]) + ",";
             z = z + String.valueOf(coords[2]) + ",";
         }
-        if(results.size() == 0) {
-            if (database.executeStatement("INSERT INTO gens (uuid, gen_x, gen_y, gen_z) VALUES(\"" + player.getUniqueId().toString() + "\", '{" + x + "}', '{" + y + "}', '{" + z + "}');")){
+        if (results.size() == 0) {
+            if (database.executeStatement("INSERT INTO gens (uuid, gen_x, gen_y, gen_z) VALUES(\""
+                    + player.getUniqueId().toString() + "\", '{" + x + "}', '{" + y + "}', '{" + z + "}');")) {
                 // Executed statement successfully
-            }else{
+            } else {
                 getLogger().info("errores");
                 // Execution failure.
             }
-        }
-        else {
-            if(database.executeStatement("UPDATE gens SET gen_x = '{" + x + "}',gen_y = '{" + y + "}', gen_z = '{" + z + "}' WHERE uuid=\"" + player.getUniqueId().toString() + "\";")) {
-                //Execution Successfull
-            }
-            else {
+        } else {
+            if (database.executeStatement("UPDATE gens SET gen_x = '{" + x + "}',gen_y = '{" + y + "}', gen_z = '{" + z
+                    + "}' WHERE uuid=\"" + player.getUniqueId().toString() + "\";")) {
+                // Execution Successfull
+            } else {
                 getLogger().info("errores");
             }
         }
-        for (Object obj : results){
-        String ID = (String)obj;
-        getLogger().info("ID: "+ID);
+        for (Object obj : results) {
+            String ID = (String) obj;
+            getLogger().info("ID: " + ID);
         }
         getLogger().info("See you again, SpigotMC!");
-    }}
-
-    @EventHandler
-public void onPlayerJoin(PlayerJoinEvent event) {
-    Player player = event.getPlayer();
-    getLogger().info(player.getUniqueId().toString());
-    List<Object> results = getDatabase("blankplugin").queryRowThree("SELECT * FROM gens WHERE uuid=\"" + player.getUniqueId().toString() + "\"", "gen_x", "gen_y", "gen_z");
-    playerName.add(player.getName());
-    if(results != null) {
-        ArrayList<Integer> x =  new ArrayList<Integer>();
-        ArrayList<Integer> y =  new ArrayList<Integer>();
-        ArrayList<Integer> z =  new ArrayList<Integer>();
-        
-        Integer iter = 0;
-    for (Object obj : results){
-        ArrayList<Integer> arr =  new ArrayList<Integer>();
-        String str = (String)obj;
-        str = StringUtils.chop(str).substring(1);
-        String[] f = str.split(",");
-        for(String i : f) {
-            arr.add(Integer.parseInt(i));
-        }
-        getLogger().info("ID: "+arr.toString() + "iter:" + iter);
-        if(iter == 0) {
-            x = arr;
-        }
-        if(iter == 1) {
-            y = arr;
-        }
-        if(iter == 2) {
-            z = arr;
-        }
-        iter++;
-        }
-    ArrayList<Integer[]> coords = new ArrayList<Integer[]>();
-    
-    for( int i = 0; i <= x.size() - 1; i++) {
-        Integer[] temp = {x.get(i), y.get(i), z.get(i)};
-        coords.add(temp);
     }
-    bellLocations.add(coords);
-{
-// get element number 0 and 1 and put it in a variable, 
-// and the next time get element      1 and 2 and put this in another variable. 
-}}
-else {
-    ArrayList<Integer[]> inner = new ArrayList<Integer[]>();
-
-    bellLocations.add(inner);
-}
-
-}
-
-@EventHandler
-public void onPlayerQuit(PlayerQuitEvent event) {
-    Player player = event.getPlayer();
-    List<Object> results = database.queryRow("SELECT * FROM gens WHERE uuid=\"" + player.getUniqueId().toString() + "\"", "gen_x");
-    getLogger().info("Is");
-    getLogger().info(String.valueOf(results.size()));
-    int index = playerName.indexOf(player.getName());
-    ArrayList<Integer[]> locations = bellLocations.get(index);
-    playerName.remove(index);
-    bellLocations.remove(index);
-    String x = "";
-    String y = "";
-    String z = "";
-    for(Integer[] coords : locations) {
-        x = x + String.valueOf(coords[0]) + ",";
-        y = y + String.valueOf(coords[1]) + ",";
-        z = z + String.valueOf(coords[2]) + ",";
-    }
-    if(results.size() == 0) {
-        if (database.executeStatement("INSERT INTO gens (uuid, gen_x, gen_y, gen_z) VALUES(\"" + player.getUniqueId().toString() + "\", '{" + x + "}', '{" + y + "}', '{" + z + "}');")){
-            // Executed statement successfully
-        }else{
-            getLogger().info("errores");
-            // Execution failure.
-        }
-    }
-    else {
-        if(database.executeStatement("UPDATE gens SET gen_x = '{" + x + "}',gen_y = '{" + y + "}', gen_z = '{" + z + "}' WHERE uuid=\"" + player.getUniqueId().toString() + "\";")) {
-            //Execution Successfull
-        }
-        else {
-            getLogger().info("errores");
-        }
-    }
-    for (Object obj : results){
-    String ID = (String)obj;
-    getLogger().info("ID: "+ID);
-    }
-    getLogger().info("See you again, SpigotMC!");
-}
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onMoveEvent(PlayerMoveEvent event) {
@@ -469,7 +484,6 @@ public void onPlayerQuit(PlayerQuitEvent event) {
                     location = tempBlockS.getLocation();
                 }
             }
-
 
             Block facing = event.getBlock().getRelative(BlockFace.UP);
             tempBlockW = facing.getRelative(BlockFace.EAST);
