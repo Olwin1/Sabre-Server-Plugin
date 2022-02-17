@@ -147,6 +147,30 @@ else {
             }.runTaskTimer(this, 10, Integer.parseInt(arr[1]) * 20);
 
         }
+        new BukkitRunnable() {
+            public void run() {
+                for( int i = 0; i <= playerName.size() - 1; i++) {
+                    for(Integer[] location : bellLocations.get(i)) {
+
+                
+                World world = Bukkit.getWorld("plots");
+
+                Location coords = new Location(world, location[0], location[1],
+                location[2]);
+                Block bell = coords.getBlock();
+                BlockData bellData = bell.getBlockData();
+                Material t = bell.getRelative(((Directional)bellData).getFacing()).getType();
+                ItemStack preItem = new ItemStack(t, 1);
+                ItemMeta meta = preItem.getItemMeta();
+
+
+                meta.displayName(Component.text(ChatColor.RESET + "d" + ChatColor.BOLD + "Mined " + capitalizeWord(preItem.getType().name().replaceAll("_", " ").toLowerCase())).color(TextColor.fromHexString("#8e8e8e")));
+                preItem.setItemMeta(meta);
+                Item item = world.dropItem(coords.add(coords, 0.5, -0.5, 0.5), preItem);
+                item.setVelocity(new Vector());
+
+            }}}
+        }.runTaskTimer(this, 10, 10 * 20);
 
     }
 
@@ -171,6 +195,16 @@ else {
     public static String color(String s) {
         return ChatColor.translateAlternateColorCodes('&', s);
     }
+    public static String capitalizeWord(String str){  
+        String words[]=str.split("\\s");  
+        String capitalizeWord="";  
+        for(String w:words){  
+            String first=w.substring(0,1);  
+            String afterfirst=w.substring(1);  
+            capitalizeWord+=first.toUpperCase()+afterfirst+" ";  
+        }  
+        return capitalizeWord.trim();  
+    } 
 
     static ItemStack createItem(Material material, Integer amount, String title, String titleColour,
             List<Component> lore) {
