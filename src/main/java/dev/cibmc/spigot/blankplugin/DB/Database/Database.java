@@ -162,6 +162,54 @@ public abstract class Database
         }
         return null;
     }
+
+
+
+    public List<Object> queryRowThree(final String statement, final String row, final String row2, final String row3) {
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        final List<Object> objects = new ArrayList<Object>();
+        try {
+            conn = this.getSQLConnection();
+            ps = conn.prepareStatement(statement);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                objects.add(rs.getObject(row));
+                objects.add(rs.getObject(row2));
+                objects.add(rs.getObject(row3));
+            }
+            return objects;
+        }
+        catch (SQLException ex) {
+            App.getInstance().getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute(), ex);
+            try {
+                if (ps != null) {
+                    ps.close();
+                }
+                if (conn != null) {
+                    conn.close();
+                }
+            }
+            catch (SQLException ex2) {
+                App.getInstance().getLogger().log(Level.SEVERE, Errors.sqlConnectionClose(), ex2);
+            }
+        }
+        finally {
+            try {
+                if (ps != null) {
+                    ps.close();
+                }
+                if (conn != null) {
+                    conn.close();
+                }
+            }
+            catch (SQLException ex2) {
+                App.getInstance().getLogger().log(Level.SEVERE, Errors.sqlConnectionClose(), ex2);
+            }
+        }
+        return null;
+    }
     
     public Map<String, List<Object>> queryMultipleRows(final String statement, final String... row) {
         Connection conn = null;
