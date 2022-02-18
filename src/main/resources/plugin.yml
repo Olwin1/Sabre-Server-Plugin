@@ -21,3 +21,6 @@ commands:
    giveitems:
       description: Gives Debug Items
       usage: /<command>
+   givedroppers:
+      description: Gives Debug Droppers
+      usage: /<command>

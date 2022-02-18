@@ -711,10 +711,170 @@ public class App extends JavaPlugin implements Listener {
 
                     // Droppers Are Below Here Now
 
-                    else if (createDropperItem("Basic Dropper", "#a8a8a8", "$13.6").getItemMeta()
+                    else if (createDropperItem("Basic Dropper", "#a8a8a8", "5").getItemMeta()
                             .equals(player
                                     .getInventory().getItemInMainHand().getItemMeta())) {
-                        placeDropper(player, b, Material.LIGHT_BLUE_WOOL);
+                        placeDropper(player, b, Material.OAK_LOG);
+
+                    } else if (createDropperItem("Lapis Dropper", "#a8a8a8", "10").getItemMeta()
+                            .equals(player
+                                    .getInventory().getItemInMainHand().getItemMeta())) {
+                        placeDropper(player, b, Material.LAPIS_BLOCK);
+
+                    } else if (createDropperItem("Iron Dropper", "#a8a8a8", "15").getItemMeta()
+                            .equals(player
+                                    .getInventory().getItemInMainHand().getItemMeta())) {
+                        placeDropper(player, b, Material.IRON_BLOCK);
+
+                    } else if (createDropperItem("Redstone Dropper", "#a8a8a8", "20").getItemMeta()
+                            .equals(player
+                                    .getInventory().getItemInMainHand().getItemMeta())) {
+                        placeDropper(player, b, Material.REDSTONE_BLOCK);
+
+                    } else if (createDropperItem("Gold Dropper", "#a8a8a8", "25").getItemMeta()
+                            .equals(player
+                                    .getInventory().getItemInMainHand().getItemMeta())) {
+                        placeDropper(player, b, Material.GOLD_BLOCK);
+
+                    } else if (createDropperItem("Diamond Dropper", "#a8a8a8", "30").getItemMeta()
+                            .equals(player
+                                    .getInventory().getItemInMainHand().getItemMeta())) {
+                        placeDropper(player, b, Material.DIAMOND_BLOCK);
+
+                    } else if (createDropperItem("Emerald Dropper", "#a8a8a8", "35").getItemMeta()
+                            .equals(player
+                                    .getInventory().getItemInMainHand().getItemMeta())) {
+                        placeDropper(player, b, Material.EMERALD_BLOCK);
+
+                    } else if (createDropperItem("Copper Dropper", "#a8a8a8", "40").getItemMeta()
+                            .equals(player
+                                    .getInventory().getItemInMainHand().getItemMeta())) {
+                        placeDropper(player, b, Material.WAXED_COPPER_BLOCK);
+
+                    } else if (createDropperItem("Aged Copper Dropper", "#a8a8a8", "45").getItemMeta()
+                            .equals(player
+                                    .getInventory().getItemInMainHand().getItemMeta())) {
+                        placeDropper(player, b, Material.OXIDIZED_COPPER);
+
+                    } else if (createDropperItem("Prismarine Dropper", "#a8a8a8", "60").getItemMeta()
+                            .equals(player
+                                    .getInventory().getItemInMainHand().getItemMeta())) {
+                        placeDropper(player, b, Material.PRISMARINE);
+
+                    } else if (createDropperItem("Advanced Prismarine Dropper", "#a8a8a8", "70").getItemMeta()
+                            .equals(player
+                                    .getInventory().getItemInMainHand().getItemMeta())) {
+                        placeDropper(player, b, Material.PRISMARINE_BRICKS);
+
+                    } else if (createDropperItem("Heavy Prismarine Dropper", "#a8a8a8", "80").getItemMeta()
+                            .equals(player
+                                    .getInventory().getItemInMainHand().getItemMeta())) {
+                        placeDropper(player, b, Material.DARK_PRISMARINE);
+
+                    } else if (createDropperItem("Crystalised Prismarine Dropper", "#a8a8a8", "90").getItemMeta()
+                            .equals(player
+                                    .getInventory().getItemInMainHand().getItemMeta())) {
+                        placeDropper(player, b, Material.SEA_LANTERN);
+
+                    } else if (createDropperItem("Glowing Dropper", "#a8a8a8", "110").getItemMeta()
+                            .equals(player
+                                    .getInventory().getItemInMainHand().getItemMeta())) {
+                        placeDropper(player, b, Material.GLOWSTONE);
+
+                    } else if (createDropperItem("Cobbled Dropper", "#a8a8a8", "130").getItemMeta()
+                            .equals(player
+                                    .getInventory().getItemInMainHand().getItemMeta())) {
+                        placeDropper(player, b, Material.COBBLED_DEEPSLATE);
+
+                    } else if (createDropperItem("Amethyst Dropper", "#a8a8a8", "150").getItemMeta()
+                            .equals(player
+                                    .getInventory().getItemInMainHand().getItemMeta())) {
+                        placeDropper(player, b, Material.AMETHYST_BLOCK);
+
+                    } else if (createDropperItem("Netherite Dropper", "#a8a8a8", "180").getItemMeta()
+                            .equals(player
+                                    .getInventory().getItemInMainHand().getItemMeta())) {
+                        placeDropper(player, b, Material.NETHERITE_BLOCK);
+
+                    } else if (createDropperItem("Nether Brick Dropper", "#a8a8a8", "210").getItemMeta()
+                            .equals(player
+                                    .getInventory().getItemInMainHand().getItemMeta())) {
+                        placeDropper(player, b, Material.NETHER_BRICKS);
+
+                    } else if (createDropperItem("Red Nether Brick Dropper", "#a8a8a8", "240").getItemMeta()
+                            .equals(player
+                                    .getInventory().getItemInMainHand().getItemMeta())) {
+                        placeDropper(player, b, Material.RED_NETHER_BRICKS);
+
+                    } else if (createDropperItem("Crimson Dropper", "#a8a8a8", "270").getItemMeta()
+                            .equals(player
+                                    .getInventory().getItemInMainHand().getItemMeta())) {
+                        placeDropper(player, b, Material.CRIMSON_STEM);
+
+                    } else if (createDropperItem("Advanced Crimson Dropper", "#a8a8a8", "300").getItemMeta()
+                            .equals(player
+                                    .getInventory().getItemInMainHand().getItemMeta())) {
+                        placeDropper(player, b, Material.NETHER_WART_BLOCK);
+
+                    } else if (createDropperItem("Warped Dropper", "#a8a8a8", "330").getItemMeta()
+                            .equals(player
+                                    .getInventory().getItemInMainHand().getItemMeta())) {
+                        placeDropper(player, b, Material.WARPED_STEM);
+
+                    } else if (createDropperItem("Advanced Warped Dropper", "#a8a8a8", "360").getItemMeta()
+                            .equals(player
+                                    .getInventory().getItemInMainHand().getItemMeta())) {
+                        placeDropper(player, b, Material.WARPED_WART_BLOCK);
+
+                    } else if (createDropperItem("Molten Dropper", "#a8a8a8", "390").getItemMeta()
+                            .equals(player
+                                    .getInventory().getItemInMainHand().getItemMeta())) {
+                        placeDropper(player, b, Material.MAGMA_BLOCK);
+
+                    } else if (createDropperItem("Shroom Dropper", "#a8a8a8", "420").getItemMeta()
+                            .equals(player
+                                    .getInventory().getItemInMainHand().getItemMeta())) {
+                        placeDropper(player, b, Material.SHROOMLIGHT);
+
+                    } else if (createDropperItem("Purpur Dropper", "#a8a8a8", "460").getItemMeta()
+                            .equals(player
+                                    .getInventory().getItemInMainHand().getItemMeta())) {
+                        placeDropper(player, b, Material.PURPUR_BLOCK);
+
+                    } else if (createDropperItem("Heavy Purpur Dropper", "#a8a8a8", "500").getItemMeta()
+                            .equals(player
+                                    .getInventory().getItemInMainHand().getItemMeta())) {
+                        placeDropper(player, b, Material.PURPUR_PILLAR);
+
+                    } else if (createDropperItem("Calcite Dropper", "#a8a8a8", "540").getItemMeta()
+                            .equals(player
+                                    .getInventory().getItemInMainHand().getItemMeta())) {
+                        placeDropper(player, b, Material.CALCITE);
+
+                    } else if (createDropperItem("Tuff Dropper", "#a8a8a8", "580").getItemMeta()
+                            .equals(player
+                                    .getInventory().getItemInMainHand().getItemMeta())) {
+                        placeDropper(player, b, Material.TUFF);
+
+                    } else if (createDropperItem("Raw Iron Dropper", "#a8a8a8", "620").getItemMeta()
+                            .equals(player
+                                    .getInventory().getItemInMainHand().getItemMeta())) {
+                        placeDropper(player, b, Material.RAW_IRON_BLOCK);
+
+                    } else if (createDropperItem("Raw Copper Dropper", "#a8a8a8", "660").getItemMeta()
+                            .equals(player
+                                    .getInventory().getItemInMainHand().getItemMeta())) {
+                        placeDropper(player, b, Material.RAW_COPPER_BLOCK);
+
+                    } else if (createDropperItem("Raw Gold Dropper", "#a8a8a8", "700").getItemMeta()
+                            .equals(player
+                                    .getInventory().getItemInMainHand().getItemMeta())) {
+                        placeDropper(player, b, Material.RAW_GOLD_BLOCK);
+
+                    } else if (createDropperItem("Ancient Dropper", "#a8a8a8", "900").getItemMeta()
+                            .equals(player
+                                    .getInventory().getItemInMainHand().getItemMeta())) {
+                        placeDropper(player, b, Material.DRIPSTONE_BLOCK);
 
                     }
 
@@ -828,7 +988,45 @@ public class App extends JavaPlugin implements Listener {
             player.getInventory().addItem(createConveyorItem("Communist Conveyor", "#a8a8a8", "10.4"));
             player.getInventory().addItem(createConveyorItem("Superior Communist Conveyor", "#a8a8a8", "11.6"));
             player.getInventory().addItem(createConveyorItem("Godly Communist Conveyor", "#a8a8a8", "13.6"));
-            player.getInventory().addItem(createDropperItem("Basic Dropper", "#a8a8a8", "$13.6"));
+
+            player.sendMessage("Given Player Item");
+        }
+
+        if (cmd.getName().equalsIgnoreCase("givedroppers") && sender instanceof Player) {
+            Player player = (Player) sender;
+            player.getInventory().addItem(createDropperItem("Basic Dropper", "#a8a8a8", "5"));
+            player.getInventory().addItem(createDropperItem("Lapis Dropper", "#a8a8a8", "10"));
+            player.getInventory().addItem(createDropperItem("Iron Dropper", "#a8a8a8", "15"));
+            player.getInventory().addItem(createDropperItem("Redstone Dropper", "#a8a8a8", "20"));
+            player.getInventory().addItem(createDropperItem("Gold Dropper", "#a8a8a8", "25"));
+            player.getInventory().addItem(createDropperItem("Diamond Dropper", "#a8a8a8", "30"));
+            player.getInventory().addItem(createDropperItem("Emerald Dropper", "#a8a8a8", "35"));
+            player.getInventory().addItem(createDropperItem("Copper Dropper", "#a8a8a8", "40"));
+            player.getInventory().addItem(createDropperItem("Aged Copper Dropper", "#a8a8a8", "45"));
+            player.getInventory().addItem(createDropperItem("Prismarine Dropper", "#a8a8a8", "60"));
+            player.getInventory().addItem(createDropperItem("Advanced Prismarine Dropper", "#a8a8a8", "70"));
+            player.getInventory().addItem(createDropperItem("Heavy Prismarine Dropper", "#a8a8a8", "80"));
+            player.getInventory().addItem(createDropperItem("Crystalised Prismarine Dropper", "#a8a8a8", "90"));
+            player.getInventory().addItem(createDropperItem("Glowing Dropper", "#a8a8a8", "110"));
+            player.getInventory().addItem(createDropperItem("Cobbled Dropper", "#a8a8a8", "130"));
+            player.getInventory().addItem(createDropperItem("Amethyst Dropper", "#a8a8a8", "150"));
+            player.getInventory().addItem(createDropperItem("Netherite Dropper", "#a8a8a8", "180"));
+            player.getInventory().addItem(createDropperItem("Nether Brick Dropper", "#a8a8a8", "210"));
+            player.getInventory().addItem(createDropperItem("Red Nether Brick Dropper", "#a8a8a8", "240"));
+            player.getInventory().addItem(createDropperItem("Crimson Dropper", "#a8a8a8", "270"));
+            player.getInventory().addItem(createDropperItem("Advanced Crimson Dropper", "#a8a8a8", "300"));
+            player.getInventory().addItem(createDropperItem("Warped Dropper", "#a8a8a8", "330"));
+            player.getInventory().addItem(createDropperItem("Advanced Warped Dropper", "#a8a8a8", "360"));
+            player.getInventory().addItem(createDropperItem("Molten Dropper", "#a8a8a8", "390"));
+            player.getInventory().addItem(createDropperItem("Shroom Dropper", "#a8a8a8", "420"));
+            player.getInventory().addItem(createDropperItem("Purpur Dropper", "#a8a8a8", "460"));
+            player.getInventory().addItem(createDropperItem("Heavy Purpur Dropper", "#a8a8a8", "500"));
+            player.getInventory().addItem(createDropperItem("Calcite Dropper", "#a8a8a8", "540"));
+            player.getInventory().addItem(createDropperItem("Tuff Dropper", "#a8a8a8", "580"));
+            player.getInventory().addItem(createDropperItem("Raw Iron Dropper", "#a8a8a8", "620"));
+            player.getInventory().addItem(createDropperItem("Raw Copper Dropper", "#a8a8a8", "660"));
+            player.getInventory().addItem(createDropperItem("Raw Gold Dropper", "#a8a8a8", "700"));
+            player.getInventory().addItem(createDropperItem("Ancient Dropper", "#a8a8a8", "900"));
 
             player.sendMessage("Given Player Item");
         }
