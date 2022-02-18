@@ -2,6 +2,7 @@ main: dev.cibmc.spigot.blankplugin.App
 name: BlankPlugin
 version: 0.1
 api-version: 1.18
+depend: [PlaceholderAPI]
 commands:
    wild:
       description: Teleports you to a random location.

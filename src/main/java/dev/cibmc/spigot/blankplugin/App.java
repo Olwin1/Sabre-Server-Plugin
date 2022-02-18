@@ -177,6 +177,9 @@ public class App extends JavaPlugin implements Listener {
                 }
             }
         }.runTaskTimer(this, 10, 10 * 20);
+        if(Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
+            new Placeholders(this).register();
+        }
 
     }
 
