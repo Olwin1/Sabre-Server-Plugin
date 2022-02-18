@@ -450,6 +450,7 @@ public class App extends JavaPlugin implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onBlockBreak(BlockBreakEvent event) {
+        int i = 0;
         for (ArrayList<Integer[]> item : bellLocations) {
             Location location = event.getBlock().getLocation();
             Block tempBlockW = event.getBlock().getRelative(BlockFace.EAST);
@@ -520,14 +521,101 @@ public class App extends JavaPlugin implements Listener {
             }
 
             Integer[] x = { location.getBlockX(), location.getBlockY(), location.getBlockZ() };
+            int i2 = 0;
             for (Integer[] coords : item) {
                 if (Arrays.equals(coords, x)) {
 
                     event.setCancelled(true);
+                    if (playerName.get(i) == event.getPlayer().getName()) {
+                        Block temp = location.getBlock();
+                        BlockData bd = temp.getBlockData();
+                        Directional direction = (Directional) bd;
+                        Block temp2 = temp.getRelative(direction.getFacing());
+                        Block temp3 = temp2.getRelative(BlockFace.DOWN);
+                        Material mat = temp2.getType();
+                        if (mat == Material.OAK_LOG) {
+                            event.getPlayer().getInventory().addItem(createDropperItem("Basic Dropper", "#a8a8a8", "5"));
+                        } else if (mat == Material.LAPIS_BLOCK) {
+                            event.getPlayer().getInventory().addItem(createDropperItem("Lapis Dropper", "#a8a8a8", "10"));
+                        } else if (mat == Material.IRON_BLOCK) {
+                            event.getPlayer().getInventory().addItem(createDropperItem("Iron Dropper", "#a8a8a8", "15"));
+                        } else if (mat == Material.REDSTONE_BLOCK) {
+                            event.getPlayer().getInventory().addItem(createDropperItem("Redstone Dropper", "#a8a8a8", "20"));
+                        } else if (mat == Material.GOLD_BLOCK) {
+                            event.getPlayer().getInventory().addItem(createDropperItem("Gold Dropper", "#a8a8a8", "25"));
+                        } else if (mat == Material.DIAMOND_BLOCK) {
+                            event.getPlayer().getInventory().addItem(createDropperItem("Diamond Dropper", "#a8a8a8", "30"));
+                        } else if (mat == Material.EMERALD_BLOCK) {
+                            event.getPlayer().getInventory().addItem(createDropperItem("Emerald Dropper", "#a8a8a8", "35"));
+                        } else if (mat == Material.WAXED_COPPER_BLOCK) {
+                            event.getPlayer().getInventory().addItem(createDropperItem("Copper Dropper", "#a8a8a8", "40"));
+                        } else if (mat == Material.OXIDIZED_COPPER) {
+                            event.getPlayer().getInventory().addItem(createDropperItem("Aged Copper Dropper", "#a8a8a8", "45"));
+                        } else if (mat == Material.PRISMARINE) {
+                            event.getPlayer().getInventory().addItem(createDropperItem("Prismarine Dropper", "#a8a8a8", "60"));
+                        } else if (mat == Material.PRISMARINE_BRICKS) {
+                            event.getPlayer().getInventory().addItem(createDropperItem("Advanced Prismarine Dropper", "#a8a8a8", "70"));
+                        } else if (mat == Material.DARK_PRISMARINE) {
+                            event.getPlayer().getInventory().addItem(createDropperItem("Heavy Prismarine Dropper", "#a8a8a8", "80"));
+                        } else if (mat == Material.SEA_LANTERN) {
+                            event.getPlayer().getInventory().addItem(createDropperItem("Crystalised Prismarine Dropper", "#a8a8a8", "90"));
+                        } else if (mat == Material.GLOWSTONE) {
+                            event.getPlayer().getInventory().addItem(createDropperItem("Glowing Dropper", "#a8a8a8", "110"));
+                        } else if (mat == Material.COBBLED_DEEPSLATE) {
+                            event.getPlayer().getInventory().addItem(createDropperItem("Cobbled Dropper", "#a8a8a8", "130"));
+                        } else if (mat == Material.AMETHYST_BLOCK) {
+                            event.getPlayer().getInventory().addItem(createDropperItem("Amethyst Dropper", "#a8a8a8", "150"));
+                        } else if (mat == Material.NETHERITE_BLOCK) {
+                            event.getPlayer().getInventory().addItem(createDropperItem("Netherite Dropper", "#a8a8a8", "180"));
+                        } else if (mat == Material.NETHER_BRICKS) {
+                            event.getPlayer().getInventory().addItem(createDropperItem("Nether Brick Dropper", "#a8a8a8", "210"));
+                        } else if (mat == Material.RED_NETHER_BRICKS) {
+                            event.getPlayer().getInventory().addItem(createDropperItem("Red Nether Brick Dropper", "#a8a8a8", "240"));
+                        } else if (mat == Material.CRIMSON_STEM) {
+                            event.getPlayer().getInventory().addItem(createDropperItem("Crimson Dropper", "#a8a8a8", "270"));
+                        } else if (mat == Material.NETHER_WART_BLOCK) {
+                            event.getPlayer().getInventory().addItem(createDropperItem("Advanced Crimson Dropper", "#a8a8a8", "300"));
+                        } else if (mat == Material.WARPED_STEM) {
+                            event.getPlayer().getInventory().addItem(createDropperItem("Warped Dropper", "#a8a8a8", "330"));
+                        } else if (mat == Material.WARPED_WART_BLOCK) {
+                            event.getPlayer().getInventory().addItem(createDropperItem("Advanced Warped Dropper", "#a8a8a8", "360"));
+                        } else if (mat == Material.MAGMA_BLOCK) {
+                            event.getPlayer().getInventory().addItem(createDropperItem("Molten Dropper", "#a8a8a8", "390"));
+                        } else if (mat == Material.SHROOMLIGHT) {
+                            event.getPlayer().getInventory().addItem(createDropperItem("Shroom Dropper", "#a8a8a8", "420"));
+                        } else if (mat == Material.PURPUR_BLOCK) {
+                            event.getPlayer().getInventory().addItem(createDropperItem("Purpur Dropper", "#a8a8a8", "460"));
+                        } else if (mat == Material.PURPUR_PILLAR) {
+                            event.getPlayer().getInventory().addItem(createDropperItem("Heavy Purpur Dropper", "#a8a8a8", "500"));
+                        } else if (mat == Material.CALCITE) {
+                            event.getPlayer().getInventory().addItem(createDropperItem("Calcite Dropper", "#a8a8a8", "540"));
+                        } else if (mat == Material.TUFF) {
+                            event.getPlayer().getInventory().addItem(createDropperItem("Tuff Dropper", "#a8a8a8", "580"));
+                        } else if (mat == Material.RAW_IRON_BLOCK) {
+                            event.getPlayer().getInventory().addItem(createDropperItem("Raw Iron Dropper", "#a8a8a8", "620"));
+                        } else if (mat == Material.RAW_COPPER_BLOCK) {
+                            event.getPlayer().getInventory().addItem(createDropperItem("Raw Copper Dropper", "#a8a8a8", "660"));
+                        } else if (mat == Material.RAW_GOLD_BLOCK) {
+                            event.getPlayer().getInventory().addItem(createDropperItem("Raw Gold Dropper", "#a8a8a8", "700"));
+                        } else if (mat == Material.DRIPSTONE_BLOCK) {
+                            event.getPlayer().getInventory().addItem(createDropperItem("Ancient Dropper", "#a8a8a8", "900"));
+                        } else {
+                            return;
+                        }
+                        temp.setType(Material.AIR);
+                        temp2.setType(Material.AIR);
+                        temp3.setType(Material.AIR);
+                        ArrayList<Integer[]> f = bellLocations.get(i);
+                        f.remove(i2);
+                        bellLocations.set(i, f);
+
+                    }
+
                     return;
                 }
+                i2++;
             }
-
+            i++;
         }
     }
 
