@@ -2,7 +2,9 @@ main: dev.cibmc.spigot.blankplugin.App
 name: BlankPlugin
 version: 0.1
 api-version: 1.18
-depend: [PlaceholderAPI]
+depend: 
+  - PlaceholderAPI
+  - Vault
 commands:
    wild:
       description: Teleports you to a random location.
@@ -24,4 +26,7 @@ commands:
       usage: /<command>
    givedroppers:
       description: Gives Debug Droppers
+      usage: /<command>
+   test-eco:
+      description: Tests Money Maker
       usage: /<command>

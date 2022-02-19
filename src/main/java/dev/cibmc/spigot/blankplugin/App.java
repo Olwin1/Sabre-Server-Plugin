@@ -52,6 +52,9 @@ import java.util.Map;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import net.milkbowl.vault.economy.Economy;
+import net.milkbowl.vault.economy.EconomyResponse;
+import org.bukkit.plugin.RegisteredServiceProvider;
 
 public class App extends JavaPlugin implements Listener {
     File file = new File("./config/", "blockSpeedConfig.yml");
@@ -62,9 +65,15 @@ public class App extends JavaPlugin implements Listener {
     static ArrayList<String> playerName = new ArrayList<String>();
     static ArrayList<ArrayList<Integer[]>> bellLocations = new ArrayList<ArrayList<Integer[]>>();
     static Database database;
+    private static Economy econ = null;
 
     @Override
     public void onEnable() {
+        if (!setupEconomy() ) {
+            getLogger().severe(String.format("[%s] - Disabled due to no Vault dependency found!", getDescription().getName()));
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
         INSTANCE = this;
         this.getDataFolder().mkdirs();
         initializeDatabase("blankplugin",
@@ -181,6 +190,17 @@ public class App extends JavaPlugin implements Listener {
             new Placeholders(this).register();
         }
 
+    }
+    private boolean setupEconomy() {
+        if (getServer().getPluginManager().getPlugin("Vault") == null) {
+            return false;
+        }
+        RegisteredServiceProvider<Economy> rsp = this.getServer().getServicesManager().getRegistration(Economy.class);
+        if (rsp == null) {
+            return false;
+        }
+        econ = rsp.getProvider();
+        return econ != null;
     }
 
     public String nonItalic(String string) {
@@ -1051,6 +1071,7 @@ public class App extends JavaPlugin implements Listener {
             } else {
                 player.sendMessage("Please Enter A Valid Material.");
             }
+
             // player.sendBlockChange(originalLocation,
             // Material.DIAMOND_BLOCK.createBlockData());
             // player.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_RED +
@@ -1058,12 +1079,24 @@ public class App extends JavaPlugin implements Listener {
             // ChatColor.GREEN + "Diamond" + ChatColor.GOLD + "has Been Created!");
             return true;
         }
+        if (cmd.getName().equalsIgnoreCase("test-eco") && sender instanceof Player) {
+            Player player = (Player) sender;
+            sender.sendMessage(String.format("You have %s", econ.format(econ.getBalance(player))));
+            EconomyResponse r = econ.depositPlayer(player, 1.05);
+            if(r.transactionSuccess()) {
+                sender.sendMessage(String.format("You were given %s and now have %s", econ.format(r.amount), econ.format(r.balance)));
+            } else {
+                sender.sendMessage(String.format("An error occured: %s", r.errorMessage));
+        }
+        return true;
+    }
         if (cmd.getName().equalsIgnoreCase("blank") && sender instanceof Player) {
             Player player = (Player) sender;
             reloadConfig();
             blockSpeedConfig = YamlConfiguration.loadConfiguration(file);
 
             player.sendMessage("Configuration Has Been Reloaded.");
+            return true;
         }
         if (cmd.getName().equalsIgnoreCase("giveitems") && sender instanceof Player) {
             Player player = (Player) sender;
@@ -1085,6 +1118,7 @@ public class App extends JavaPlugin implements Listener {
             player.getInventory().addItem(createConveyorItem("Godly Communist Conveyor", "#a8a8a8", "13.6"));
 
             player.sendMessage("Given Player Item");
+            return true;
         }
 
         if (cmd.getName().equalsIgnoreCase("givedroppers") && sender instanceof Player) {
@@ -1124,6 +1158,7 @@ public class App extends JavaPlugin implements Listener {
             player.getInventory().addItem(createDropperItem("Ancient Dropper", "#a8a8a8", "900"));
 
             player.sendMessage("Given Player Item");
+            return true;
         }
 
         return false;
