@@ -208,6 +208,10 @@ public class App extends JavaPlugin implements Listener {
     public static String color(String s) {
         return ChatColor.translateAlternateColorCodes('&', s);
     }
+    public ArrayList<Integer[]> getPlayerGens(String name) {
+        int index = playerName.indexOf(name);
+        return bellLocations.get(index);
+    }
 
     public static String capitalizeWord(String str) {
         String words[] = str.split("\\s");

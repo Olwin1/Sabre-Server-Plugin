@@ -3,6 +3,7 @@ package dev.cibmc.spigot.blankplugin;
 
 import org.bukkit.OfflinePlayer;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
+import java.util.ArrayList;
 
 public class Placeholders extends PlaceholderExpansion {
 
@@ -14,12 +15,12 @@ public class Placeholders extends PlaceholderExpansion {
     
     @Override
     public String getAuthor() {
-        return "someauthor";
+        return "Olwin1";
     }
     
     @Override
     public String getIdentifier() {
-        return "example";
+        return "sabre";
     }
 
     @Override
@@ -33,13 +34,10 @@ public class Placeholders extends PlaceholderExpansion {
     }
     
     @Override
-    public String onRequest(OfflinePlayer player, String params) {
-        if(params.equalsIgnoreCase("placeholder1")){
-            return plugin.getConfig().getString("placeholders.placeholder1", "default1");
-        }
-        
-        if(params.equalsIgnoreCase("placeholder2")) {
-            return plugin.getConfig().getString("placeholders.placeholder2", "default2");
+    public String onRequest(OfflinePlayer player, String params) {        
+        if(params.equalsIgnoreCase("gencount")) {
+            ArrayList<Integer[]> gens = plugin.getPlayerGens(player.getName());
+            return String.valueOf(gens.size());
         }
         
         return null; // Placeholder is unknown by the Expansion
