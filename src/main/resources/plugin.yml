@@ -27,6 +27,6 @@ commands:
    givedroppers:
       description: Gives Debug Droppers
       usage: /<command>
-   test-eco:
+   sell:
       description: Tests Money Maker
       usage: /<command>

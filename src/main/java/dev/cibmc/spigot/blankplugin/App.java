@@ -14,6 +14,8 @@ import org.bukkit.World;
 import org.bukkit.configuration.file.YamlConfiguration;
 import java.io.File;
 import java.util.Random;
+
+
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
@@ -46,6 +48,8 @@ import org.bukkit.event.player.PlayerMoveEvent;
 
 import org.bukkit.entity.Item;
 import dev.cibmc.spigot.blankplugin.DB.Database.SQLite;
+import it.unimi.dsi.fastutil.Pair;
+
 import java.util.HashMap;
 import dev.cibmc.spigot.blankplugin.DB.Database.Database;
 import java.util.Map;
@@ -101,7 +105,9 @@ public class App extends JavaPlugin implements Listener {
                     str = StringUtils.chop(str).substring(1);
                     String[] f = str.split(",");
                     for (String i : f) {
+                        if(i != "") {
                         arr.add(Integer.parseInt(i));
+                        }
                     }
                     getLogger().info("ID: " + arr.toString() + "iter:" + iter);
                     if (iter == 0) {
@@ -180,7 +186,6 @@ public class App extends JavaPlugin implements Listener {
                             drop = Material.OAK_PLANKS;
                         } else if (t == Material.LAPIS_BLOCK) {
                             name = "Lapis";
-                            name = "";
                             drop = Material.LAPIS_LAZULI;
                         } else if (t == Material.IRON_BLOCK) {
                             name = "Iron";
@@ -339,9 +344,9 @@ public class App extends JavaPlugin implements Listener {
         return ChatColor.translateAlternateColorCodes('&', s);
     }
 
-    public ArrayList<Integer[]> getPlayerGens(String name) {
+    public String getPlayerGens(String name) {
         int index = playerName.indexOf(name);
-        return bellLocations.get(index);
+        return String.valueOf(bellLocations.get(index).size());
     }
 
     public static String capitalizeWord(String str) {
@@ -426,7 +431,10 @@ public class App extends JavaPlugin implements Listener {
             getLogger().info("Is");
             getLogger().info(String.valueOf(results.size()));
             Integer index = playerName.indexOf(player.getName());
+            getLogger().info(String.valueOf(index));
             ArrayList<Integer[]> locations = bellLocations.get(index);
+            getLogger().info(String.valueOf(locations));
+
             String x = "";
             String y = "";
             String z = "";
@@ -478,7 +486,9 @@ public class App extends JavaPlugin implements Listener {
                 str = StringUtils.chop(str).substring(1);
                 String[] f = str.split(",");
                 for (String i : f) {
+                    if(i != "") {
                     arr.add(Integer.parseInt(i));
+                    }
                 }
                 getLogger().info("ID: " + arr.toString() + "iter:" + iter);
                 if (iter == 0) {
@@ -1142,6 +1152,67 @@ public class App extends JavaPlugin implements Listener {
         }
         return;
     }
+    public Pair<Integer, ArrayList<Integer>> createSellItem(String name, Material mat,  PlayerInventory inv) {
+        ItemStack preItem = new ItemStack(mat, 1);
+            ItemMeta meta = preItem.getItemMeta();
+            meta.displayName(
+                Component
+                        .text(nonItalic("Mined "
+                                + name))
+                        .color(TextColor.fromHexString("#8e8e8e")));
+        preItem.setItemMeta(meta);
+            ArrayList<Integer> keys = new ArrayList<Integer>();
+            ArrayList<Integer> sellValue = new ArrayList<Integer>();
+        inv.all(mat).forEach((key, value) -> {
+            Integer tempSellValue = 0;
+            getLogger().info("I am the iteration! \"" + key + "\"");
+            getLogger().info("I am the ItemStack! \"" + value + "\"");
+            if (preItem.getItemMeta().equals(value.getItemMeta())) {
+                if (value.getType().equals(Material.OAK_PLANKS)) {tempSellValue += 5 * value.getAmount();}
+                else if (value.getType().equals(Material.LAPIS_LAZULI)) {tempSellValue += 10 * value.getAmount();}
+                else if (value.getType().equals(Material.IRON_INGOT)) {tempSellValue += 15 * value.getAmount();}
+                else if (value.getType().equals(Material.REDSTONE)) {tempSellValue += 20 * value.getAmount();}
+                else if (value.getType().equals(Material.GOLD_INGOT)) {tempSellValue += 25 * value.getAmount();}
+                else if (value.getType().equals(Material.DIAMOND)) {tempSellValue += 30 * value.getAmount();}
+                else if (value.getType().equals(Material.EMERALD)) {tempSellValue += 35 * value.getAmount();}
+                else if (value.getType().equals(Material.COPPER_INGOT)) {tempSellValue += 40 * value.getAmount();}
+                else if (value.getType().equals(Material.RAW_COPPER)) {tempSellValue += 45 * value.getAmount();}
+                else if (value.getType().equals(Material.PRISMARINE_SHARD)) {tempSellValue += 60 * value.getAmount();}
+                else if (value.getType().equals(Material.PRISMARINE_SHARD)) {tempSellValue += 70 * value.getAmount();}
+                else if (value.getType().equals(Material.PRISMARINE_SHARD)) {tempSellValue += 80 * value.getAmount();}
+                else if (value.getType().equals(Material.PRISMARINE_CRYSTALS)) {tempSellValue += 90 * value.getAmount();}
+                else if (value.getType().equals(Material.GLOWSTONE_DUST)) {tempSellValue += 110 * value.getAmount();}
+                else if (value.getType().equals(Material.COBBLED_DEEPSLATE)) {tempSellValue += 130 * value.getAmount();}
+                else if (value.getType().equals(Material.AMETHYST_SHARD)) {tempSellValue += 150 * value.getAmount();}
+                else if (value.getType().equals(Material.NETHERITE_INGOT)) {tempSellValue += 180 * value.getAmount();}
+                else if (value.getType().equals(Material.NETHER_BRICK)) {tempSellValue += 210 * value.getAmount();}
+                else if (value.getType().equals(Material.NETHER_BRICK)) {tempSellValue += 240 * value.getAmount();}
+                else if (value.getType().equals(Material.CRIMSON_FUNGUS)) {tempSellValue += 270 * value.getAmount();}
+                else if (value.getType().equals(Material.CRIMSON_FUNGUS)) {tempSellValue += 300 * value.getAmount();}
+                else if (value.getType().equals(Material.WARPED_FUNGUS)) {tempSellValue += 330 * value.getAmount();}
+                else if (value.getType().equals(Material.WARPED_FUNGUS)) {tempSellValue += 360 * value.getAmount();}
+                else if (value.getType().equals(Material.MAGMA_CREAM)) {tempSellValue += 390 * value.getAmount();}
+                else if (value.getType().equals(Material.RED_MUSHROOM)) {tempSellValue += 420 * value.getAmount();}
+                else if (value.getType().equals(Material.PURPLE_DYE)) {tempSellValue += 460 * value.getAmount();}
+                else if (value.getType().equals(Material.PURPLE_DYE)) {tempSellValue += 500 * value.getAmount();}
+                else if (value.getType().equals(Material.CALCITE)) {tempSellValue += 540 * value.getAmount();}
+                else if (value.getType().equals(Material.TUFF)) {tempSellValue += 580 * value.getAmount();}
+                else if (value.getType().equals(Material.RAW_IRON)) {tempSellValue += 620 * value.getAmount();}
+                else if (value.getType().equals(Material.RAW_COPPER)) {tempSellValue += 660 * value.getAmount();}
+                else if (value.getType().equals(Material.RAW_GOLD)) {tempSellValue += 700 * value.getAmount();}
+                else if (value.getType().equals(Material.DRIPSTONE_BLOCK)) {tempSellValue += 900 * value.getAmount();}
+                keys.add(key);
+            }
+            sellValue.add(tempSellValue);
+
+        });
+        Integer total = 0;
+        for (Integer val : sellValue) {
+            total += val;
+        }
+        Pair<Integer, ArrayList<Integer>> pair = Pair.of(total, keys);
+        return pair;
+    }
 
     public boolean onCommand(CommandSender sender, Command cmd, String abel, String[] args) {
 
@@ -1223,18 +1294,60 @@ public class App extends JavaPlugin implements Listener {
             // ChatColor.GREEN + "Diamond" + ChatColor.GOLD + "has Been Created!");
             return true;
         }
-        if (cmd.getName().equalsIgnoreCase("test-eco") && sender instanceof Player) {
+        if (cmd.getName().equalsIgnoreCase("sell") && sender instanceof Player) {
             Player player = (Player) sender;
             PlayerInventory inv = player.getInventory();
             inv.all(Material.PURPLE_WOOL).forEach((key, value) -> {
                 getLogger().info("I am the key! \"" + key + "\"");
                 getLogger().info("I am the value! \"" + value + "\"");
             });
+            Integer total = 0;
+            ArrayList<Pair<Integer, ArrayList<Integer>>> items = new ArrayList<Pair<Integer, ArrayList<Integer>>>();
+                items.add(createSellItem("Wood", Material.OAK_PLANKS, inv));
+                items.add(createSellItem("Lapis", Material.LAPIS_LAZULI, inv));
+                items.add(createSellItem("Iron", Material.IRON_INGOT, inv));
+                items.add(createSellItem("Redstone", Material.REDSTONE, inv));
+                items.add(createSellItem("Gold", Material.GOLD_INGOT, inv));
+                items.add(createSellItem("Diamond", Material.DIAMOND, inv));
+                items.add(createSellItem("Emerald", Material.EMERALD, inv));
+                items.add(createSellItem("Copper", Material.COPPER_INGOT, inv));
+                items.add(createSellItem("Aged Copper", Material.RAW_COPPER, inv));
+                items.add(createSellItem("Prismarine", Material.PRISMARINE_SHARD, inv));
+                items.add(createSellItem("Advanced Prismarine", Material.PRISMARINE_SHARD, inv));
+                items.add(createSellItem("Heavy Prismarine", Material.PRISMARINE_SHARD, inv));
+                items.add(createSellItem("Crystalized Prismarine", Material.PRISMARINE_CRYSTALS, inv));
+                items.add(createSellItem("Glowstone", Material.GLOWSTONE_DUST, inv));
+                items.add(createSellItem("Deepslate", Material.COBBLED_DEEPSLATE, inv));
+                items.add(createSellItem("Amethyst", Material.AMETHYST_SHARD, inv));
+                items.add(createSellItem("Netherite", Material.NETHERITE_INGOT, inv));
+                items.add(createSellItem("Bricks", Material.NETHER_BRICK, inv));
+                items.add(createSellItem("Red Bricks", Material.NETHER_BRICK, inv));
+                items.add(createSellItem("Crimson", Material.CRIMSON_FUNGUS, inv));
+                items.add(createSellItem("Advanced Crimson", Material.CRIMSON_FUNGUS, inv));
+                items.add(createSellItem("Warped", Material.WARPED_FUNGUS, inv));
+                items.add(createSellItem("Advanced Warped", Material.WARPED_FUNGUS, inv));
+                items.add(createSellItem("Magma", Material.MAGMA_CREAM, inv));
+                items.add(createSellItem("Mushroom", Material.RED_MUSHROOM, inv));
+                items.add(createSellItem("Purpur", Material.PURPLE_DYE, inv));
+                items.add(createSellItem("Advanced Purpur", Material.PURPLE_DYE, inv));
+                items.add(createSellItem("Calcite", Material.CALCITE, inv));
+                items.add(createSellItem("Tuff", Material.TUFF, inv));
+                items.add(createSellItem("Raw Iron", Material.RAW_IRON, inv));
+                items.add(createSellItem("Raw Copper", Material.RAW_COPPER, inv));
+                items.add(createSellItem("Raw Gold", Material.RAW_GOLD, inv));
+                items.add(createSellItem("Ancient Ore", Material.DRIPSTONE_BLOCK, inv));
+                items.add(createSellItem("null", Material.LIGHT_BLUE_WOOL, inv));
+                for(Pair<Integer, ArrayList<Integer>> item : items) {
+                    for(Integer key : item.second()) {
+                        inv.setItem(key, new ItemStack(Material.AIR));
+                    }
+                    total += item.first();
+                }
             sender.sendMessage(String.format("You have %s", econ.format(econ.getBalance(player))));
-            EconomyResponse r = econ.depositPlayer(player, 1.05);
+            EconomyResponse r = econ.depositPlayer(player, total);
             if (r.transactionSuccess()) {
-                sender.sendMessage(String.format("You were given %s and now have %s", econ.format(r.amount),
-                        econ.format(r.balance)));
+                sender.sendMessage(Component.text("Sold Mined Items For ").color(TextColor.fromHexString("#2fad37")).append(Component.text(econ.format(r.amount)).color(TextColor.fromHexString("#FF5555"))));
+
             } else {
                 sender.sendMessage(String.format("An error occured: %s", r.errorMessage));
             }
