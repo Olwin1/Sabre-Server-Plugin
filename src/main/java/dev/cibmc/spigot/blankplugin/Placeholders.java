@@ -3,7 +3,6 @@ package dev.cibmc.spigot.blankplugin;
 
 import org.bukkit.OfflinePlayer;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
-import java.util.ArrayList;
 
 public class Placeholders extends PlaceholderExpansion {
 
@@ -35,9 +34,8 @@ public class Placeholders extends PlaceholderExpansion {
     
     @Override
     public String onRequest(OfflinePlayer player, String params) {        
-        if(params.equalsIgnoreCase("gencount")) {
-            ArrayList<Integer[]> gens = plugin.getPlayerGens(player.getName());
-            return String.valueOf(gens.size());
+            if(params.equalsIgnoreCase("placedgens")) {
+                return plugin.getPlayerGens(player.getName());
         }
         
         return null; // Placeholder is unknown by the Expansion
