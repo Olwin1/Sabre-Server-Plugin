@@ -161,6 +161,8 @@ public class App extends JavaPlugin implements Listener {
         }
         new BukkitRunnable() {
             public void run() {
+                if(playerName.size() != 0) {
+
                 for (int i = 0; i <= playerName.size() - 1; i++) {
                     for (Integer[] location : bellLocations.get(i)) {
 
@@ -290,7 +292,7 @@ public class App extends JavaPlugin implements Listener {
                         item.setVelocity(new Vector());
 
                     }
-                }
+                }}
             }
         }.runTaskTimer(this, 10, 10 * 20);
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
