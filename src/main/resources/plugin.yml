@@ -31,6 +31,3 @@ commands:
    sell:
       description: Tests Money Maker
       usage: /<command>
-   debugb:
-      description: Debugger
-      usage: /<command>

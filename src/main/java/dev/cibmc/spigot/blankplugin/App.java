@@ -822,6 +822,9 @@ public class App extends JavaPlugin implements Listener {
                     }
                 }, 4L);
             }
+            else {
+                return;
+            }
 
             if (player.getInventory().getItemInMainHand().hasItemMeta()) {
                 if (player.getInventory().getItemInMainHand().getItemMeta().hasLore()) {
@@ -1150,6 +1153,199 @@ public class App extends JavaPlugin implements Listener {
 
                 }
             }
+            // Detect Right Click Of Dropper
+
+            int i = 0;
+            for (ArrayList<Integer[]> item : bellLocations) {
+                Location location = event.getClickedBlock().getLocation();
+                Block tempBlockW = event.getClickedBlock().getRelative(BlockFace.EAST);
+                Block tempBlockE = event.getClickedBlock().getRelative(BlockFace.WEST);
+                Block tempBlockN = event.getClickedBlock().getRelative(BlockFace.SOUTH);
+                Block tempBlockS = event.getClickedBlock().getRelative(BlockFace.NORTH);
+    
+                if (tempBlockW.getType() == Material.BELL) {
+                    Directional direction = (Directional) tempBlockW.getBlockData();
+                    if (direction.getFacing() == BlockFace.WEST) {
+                        location = tempBlockW.getLocation();
+                    }
+                }
+    
+                if (tempBlockE.getType() == Material.BELL) {
+                    Directional direction = (Directional) tempBlockE.getBlockData();
+                    if (direction.getFacing() == BlockFace.EAST) {
+                        location = tempBlockE.getLocation();
+                    }
+                }
+    
+                if (tempBlockN.getType() == Material.BELL) {
+                    Directional direction = (Directional) tempBlockN.getBlockData();
+                    if (direction.getFacing() == BlockFace.NORTH) {
+                        location = tempBlockN.getLocation();
+                    }
+                }
+    
+                if (tempBlockS.getType() == Material.BELL) {
+                    Directional direction = (Directional) tempBlockS.getBlockData();
+                    if (direction.getFacing() == BlockFace.SOUTH) {
+                        location = tempBlockS.getLocation();
+                    }
+                }
+    
+                Block facing = event.getClickedBlock().getRelative(BlockFace.UP);
+                tempBlockW = facing.getRelative(BlockFace.EAST);
+                tempBlockE = facing.getRelative(BlockFace.WEST);
+                tempBlockN = facing.getRelative(BlockFace.SOUTH);
+                tempBlockS = facing.getRelative(BlockFace.NORTH);
+    
+                if (tempBlockW.getType() == Material.BELL) {
+                    Directional direction = (Directional) tempBlockW.getBlockData();
+                    if (direction.getFacing() == BlockFace.WEST) {
+                        location = tempBlockW.getLocation();
+                    }
+                }
+    
+                if (tempBlockE.getType() == Material.BELL) {
+                    Directional direction = (Directional) tempBlockE.getBlockData();
+                    if (direction.getFacing() == BlockFace.EAST) {
+                        location = tempBlockE.getLocation();
+                    }
+                }
+    
+                if (tempBlockN.getType() == Material.BELL) {
+                    Directional direction = (Directional) tempBlockN.getBlockData();
+                    if (direction.getFacing() == BlockFace.NORTH) {
+                        location = tempBlockN.getLocation();
+                    }
+                }
+    
+                if (tempBlockS.getType() == Material.BELL) {
+                    Directional direction = (Directional) tempBlockS.getBlockData();
+                    if (direction.getFacing() == BlockFace.SOUTH) {
+                        location = tempBlockS.getLocation();
+                    }
+                }
+    
+                Integer[] x = { location.getBlockX(), location.getBlockY(), location.getBlockZ() };
+                for (Integer[] coords : item) {
+                    if (Arrays.equals(coords, x)) {
+                        //EXECUTE GUI OPEN
+                        if (playerName.get(i) == event.getPlayer().getName()) {
+                            Block temp = location.getBlock();
+                            BlockData bd = temp.getBlockData();
+                            Directional direction = (Directional) bd;
+                            Block temp2 = temp.getRelative(direction.getFacing());
+                            Material mat = temp2.getType();
+                            if (mat == Material.OAK_LOG) {
+                                MyGUIs.rankedInventory(Material.LAPIS_BLOCK, "Lapis", econ, 65,  temp2).open(player);
+                            } else if (mat == Material.LAPIS_BLOCK) {
+                                MyGUIs.rankedInventory(Material.IRON_BLOCK, "Iron", econ, 65,  temp2).open(player);
+
+                            } else if (mat == Material.IRON_BLOCK) {
+                                MyGUIs.rankedInventory(Material.REDSTONE_BLOCK, "Redstone", econ, 65,  temp2).open(player);
+
+                            } else if (mat == Material.REDSTONE_BLOCK) {
+                                MyGUIs.rankedInventory(Material.GOLD_BLOCK, "Gold", econ, 65,  temp2).open(player);
+
+                            } else if (mat == Material.GOLD_BLOCK) {
+                                MyGUIs.rankedInventory(Material.DIAMOND_BLOCK, "Diamond", econ, 65,  temp2).open(player);
+
+                            } else if (mat == Material.DIAMOND_BLOCK) {
+                                MyGUIs.rankedInventory(Material.EMERALD_BLOCK, "Emerald", econ, 65,  temp2).open(player);
+
+                            } else if (mat == Material.EMERALD_BLOCK) {
+                                MyGUIs.rankedInventory(Material.WAXED_COPPER_BLOCK, "Copper", econ, 65,  temp2).open(player);
+
+                            } else if (mat == Material.WAXED_COPPER_BLOCK) {
+                                MyGUIs.rankedInventory(Material.OXIDIZED_COPPER, "Ancient Copper", econ, 65,  temp2).open(player);
+
+                            } else if (mat == Material.OXIDIZED_COPPER) {
+                                MyGUIs.rankedInventory(Material.PRISMARINE, "Prismarine", econ, 65,  temp2).open(player);
+
+                            } else if (mat == Material.PRISMARINE) {
+                                MyGUIs.rankedInventory(Material.PRISMARINE_BRICKS, "Advanced Prismarine", econ, 65,  temp2).open(player);
+
+                            } else if (mat == Material.PRISMARINE_BRICKS) {
+                                MyGUIs.rankedInventory(Material.DARK_PRISMARINE, "Heavy Prismarine", econ, 65,  temp2).open(player);
+
+                            } else if (mat == Material.DARK_PRISMARINE) {
+                                MyGUIs.rankedInventory(Material.SEA_LANTERN, "Crystalised Prismarine", econ, 65,  temp2).open(player);
+
+                            } else if (mat == Material.SEA_LANTERN) {
+                                MyGUIs.rankedInventory(Material.GLOWSTONE, "Glowing", econ, 65,  temp2).open(player);
+
+                            } else if (mat == Material.GLOWSTONE) {
+                                MyGUIs.rankedInventory(Material.COBBLED_DEEPSLATE, "Cobbled", econ, 65,  temp2).open(player);
+
+                            } else if (mat == Material.COBBLED_DEEPSLATE) {
+                                MyGUIs.rankedInventory(Material.AMETHYST_BLOCK, "Amethyst", econ, 65,  temp2).open(player);
+
+                            } else if (mat == Material.AMETHYST_BLOCK) {
+                                MyGUIs.rankedInventory(Material.NETHERITE_BLOCK, "Netherite", econ, 65,  temp2).open(player);
+
+                            } else if (mat == Material.NETHERITE_BLOCK) {
+                                MyGUIs.rankedInventory(Material.NETHER_BRICKS, "Nether Brick", econ, 65,  temp2).open(player);
+
+                            } else if (mat == Material.NETHER_BRICKS) {
+                                MyGUIs.rankedInventory(Material.RED_NETHER_BRICKS, "Red Nether Brick", econ, 65,  temp2).open(player);
+
+                            } else if (mat == Material.RED_NETHER_BRICKS) {
+                                MyGUIs.rankedInventory(Material.CRIMSON_STEM, "Crimson", econ, 65,  temp2).open(player);
+
+                            } else if (mat == Material.CRIMSON_STEM) {
+                                MyGUIs.rankedInventory(Material.NETHER_WART_BLOCK, "Advanced Crimson", econ, 65,  temp2).open(player);
+
+                            } else if (mat == Material.NETHER_WART_BLOCK) {
+                                MyGUIs.rankedInventory(Material.WARPED_STEM, "Warped", econ, 65,  temp2).open(player);
+
+                            } else if (mat == Material.WARPED_STEM) {
+                                MyGUIs.rankedInventory(Material.WARPED_WART_BLOCK, "Advanced Warped", econ, 65,  temp2).open(player);
+
+                            } else if (mat == Material.WARPED_WART_BLOCK) {
+                                MyGUIs.rankedInventory(Material.MAGMA_BLOCK, "Molten", econ, 65,  temp2).open(player);
+
+                            } else if (mat == Material.MAGMA_BLOCK) {
+                                MyGUIs.rankedInventory(Material.SHROOMLIGHT, "Shroom", econ, 65,  temp2).open(player);
+
+                            } else if (mat == Material.SHROOMLIGHT) {
+                                MyGUIs.rankedInventory(Material.PURPUR_BLOCK, "Purpur", econ, 65,  temp2).open(player);
+
+                            } else if (mat == Material.PURPUR_BLOCK) {
+                                MyGUIs.rankedInventory(Material.PURPUR_PILLAR, "Advanced Purpur", econ, 65,  temp2).open(player);
+
+                            } else if (mat == Material.PURPUR_PILLAR) {
+                                MyGUIs.rankedInventory(Material.CALCITE, "Calcite", econ, 65,  temp2).open(player);
+
+                            } else if (mat == Material.CALCITE) {
+                                MyGUIs.rankedInventory(Material.TUFF, "Tuff", econ, 65,  temp2).open(player);
+
+                            } else if (mat == Material.TUFF) {
+                                MyGUIs.rankedInventory(Material.RAW_IRON_BLOCK, "Raw Iron", econ, 65,  temp2).open(player);
+
+                            } else if (mat == Material.RAW_IRON_BLOCK) {
+                                MyGUIs.rankedInventory(Material.RAW_COPPER_BLOCK, "Raw Copper", econ, 65,  temp2).open(player);
+
+                            } else if (mat == Material.RAW_COPPER_BLOCK) {
+                                MyGUIs.rankedInventory(Material.RAW_GOLD_BLOCK, "Raw Gold", econ, 65,  temp2).open(player);
+
+                            } else if (mat == Material.RAW_GOLD_BLOCK) {
+                                MyGUIs.rankedInventory(Material.DRIPSTONE_BLOCK, "Ancient", econ, 65,  temp2).open(player);
+
+                            //} else if (mat == Material.DRIPSTONE_BLOCK) {
+                                //MyGUIs.rankedInventory(Material.LAPIS_BLOCK, "Lais", econ, 65,  temp2).open(player);
+
+                            } else {
+                                return;
+                            }
+    
+                        }
+    
+                        return;
+                    }
+                }
+                i++;
+            }
+
+            //End Of Detector
         }
         return;
     }
@@ -1388,18 +1584,6 @@ public class App extends JavaPlugin implements Listener {
             } else {
                 sender.sendMessage(String.format("An error occured: %s", r.errorMessage));
             }
-            return true;
-        }
-        if(cmd.getName().equalsIgnoreCase("debugb") && sender instanceof Player) {
-            getLogger().info("1");
-            Player player = (Player) sender;
-            getLogger().info("2");
-            //MyGUIs gui w= new MyGUIs();
-    System.out.println("wed");
-    getLogger().info("45");
-            MyGUIs.rankedInventory.open(player);
-
-            getLogger().info("3");
             return true;
         }
         if (cmd.getName().equalsIgnoreCase("blank") && sender instanceof Player) {
