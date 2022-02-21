@@ -44,6 +44,12 @@
             <version>2.11.1</version>
          <scope>provided</scope>
       </dependency>
+      <dependency>
+            <groupId>fr.minuskube.inv</groupId>
+            <artifactId>smart-invs</artifactId>
+            <version>1.2.7</version>
+      </dependency>
+      
       
   </dependencies>
   <build>
