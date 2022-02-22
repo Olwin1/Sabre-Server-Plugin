@@ -31,3 +31,6 @@ commands:
    sell:
       description: Tests Money Maker
       usage: /<command>
+   buydropper:
+       description: GUI for Buying a Dropper
+       usage: /<command>

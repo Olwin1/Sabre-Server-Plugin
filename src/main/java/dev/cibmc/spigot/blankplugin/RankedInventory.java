@@ -16,6 +16,7 @@ import net.milkbowl.vault.economy.EconomyResponse;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import java.util.ArrayList;
 
 public class RankedInventory  implements InventoryProvider {
     private Material mat;
@@ -48,8 +49,10 @@ public class RankedInventory  implements InventoryProvider {
     ItemStack itemMain = new ItemStack(this.mat);
     ItemMeta metaMain = itemMain.getItemMeta();
     metaMain.displayName(Component.text(nonItalic(name + " Upgrade")));
+    ArrayList<Component> lore = new ArrayList<Component>();
+    lore.add(Component.text(nonItalic(ChatColor.GREEN + "Buy: " + ChatColor.RED + "$" + String.valueOf(price))));
+    metaMain.lore(lore);
     itemMain.setItemMeta(metaMain);
-    contents.fill(ClickableItem.empty(item));
 
     contents.set(1, 4, ClickableItem.of(itemMain,
             (e) -> {

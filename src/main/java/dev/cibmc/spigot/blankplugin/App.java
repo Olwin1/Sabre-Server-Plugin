@@ -1594,6 +1594,11 @@ public class App extends JavaPlugin implements Listener {
             player.sendMessage("Configuration Has Been Reloaded.");
             return true;
         }
+        if(cmd.getName().equalsIgnoreCase("buydropper") && sender instanceof Player) {
+            Player player = (Player) sender;
+            MyGUIs.mainDropperBuyInventory(createConveyorItem("Basic Conveyor", "#a8a8a8", "1"), createDropperItem("Basic Dropper", "#a8a8a8", "5"), econ).open(player);
+            return true;
+        }
         if (cmd.getName().equalsIgnoreCase("giveitems") && sender instanceof Player) {
             Player player = (Player) sender;
             player.getInventory().addItem(createConveyorItem("Basic Conveyor", "#a8a8a8", "1"));
