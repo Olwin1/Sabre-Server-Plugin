@@ -50,7 +50,7 @@ public class RankedInventory  implements InventoryProvider {
     ItemMeta metaMain = itemMain.getItemMeta();
     metaMain.displayName(Component.text(nonItalic(name + " Upgrade")));
     ArrayList<Component> lore = new ArrayList<Component>();
-    lore.add(Component.text(nonItalic(ChatColor.GREEN + "Buy: " + ChatColor.RED + "$" + String.valueOf(price))));
+    lore.add(Component.text(nonItalic(ChatColor.GREEN + "Buy: " + ChatColor.RED + econ.format(price))));
     metaMain.lore(lore);
     itemMain.setItemMeta(metaMain);
 
