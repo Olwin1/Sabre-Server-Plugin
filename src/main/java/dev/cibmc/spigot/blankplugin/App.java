@@ -60,7 +60,6 @@ import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.inventory.PlayerInventory;
 
-
 public class App extends JavaPlugin implements Listener {
     File file = new File("./config/", "blockSpeedConfig.yml");
     YamlConfiguration blockSpeedConfig = YamlConfiguration.loadConfiguration(file);
@@ -124,7 +123,7 @@ public class App extends JavaPlugin implements Listener {
                 ArrayList<Integer[]> coords = new ArrayList<Integer[]>();
 
                 for (int i = 0; i <= x.size() - 1; i++) {
-                    Integer[] temp = { x.get(i), y.get(i), z.get(i) };
+                    Integer[] temp = { x.get(i), y.get(i), z.get(i)};
                     coords.add(temp);
                 }
                 bellLocations.add(coords);
@@ -165,142 +164,142 @@ public class App extends JavaPlugin implements Listener {
             }.runTaskTimer(this, 10, Integer.parseInt(arr[1]) * 20);
 
         }
-        new BukkitRunnable() {
-            public void run() {
-                if (playerName.size() != 0) {
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(this,
+                () -> {
+                    if (playerName.size() != 0) {
 
-                    for (int i = 0; i <= playerName.size() - 1; i++) {
-                        for (Integer[] location : bellLocations.get(i)) {
+                        for (int i = 0; i <= playerName.size() - 1; i++) {
+                            for (Integer[] location : bellLocations.get(i)) {
 
-                            World world = Bukkit.getWorld("plots");
+                                World world = Bukkit.getWorld("plots");
+                                if(world.isChunkLoaded(location[0] >> 4, location[2] >> 4)) {
 
-                            Location coords = new Location(world, location[0], location[1],
-                                    location[2]);
-                            Block bell = coords.getBlock();
-                            BlockData bellData = bell.getBlockData();
-                            Material t = bell.getRelative(((Directional) bellData).getFacing()).getType();
-                            Material drop;
-                            String name;
-                            if (t == Material.OAK_LOG) {
-                                name = "Wood";
-                                drop = Material.OAK_PLANKS;
-                            } else if (t == Material.LAPIS_BLOCK) {
-                                name = "Lapis";
-                                drop = Material.LAPIS_LAZULI;
-                            } else if (t == Material.IRON_BLOCK) {
-                                name = "Iron";
-                                drop = Material.IRON_INGOT;
-                            } else if (t == Material.REDSTONE_BLOCK) {
-                                name = "Redstone";
-                                drop = Material.REDSTONE;
-                            } else if (t == Material.GOLD_BLOCK) {
-                                name = "Gold";
-                                drop = Material.GOLD_INGOT;
-                            } else if (t == Material.DIAMOND_BLOCK) {
-                                name = "Diamond";
-                                drop = Material.DIAMOND;
-                            } else if (t == Material.EMERALD_BLOCK) {
-                                name = "Emerald";
-                                drop = Material.EMERALD;
-                            } else if (t == Material.WAXED_COPPER_BLOCK) {
-                                name = "Copper";
-                                drop = Material.COPPER_INGOT;
-                            } else if (t == Material.OXIDIZED_COPPER) {
-                                name = "Aged Copper";
-                                drop = Material.RAW_COPPER;
-                            } else if (t == Material.PRISMARINE) {
-                                name = "Prismarine";
-                                drop = Material.PRISMARINE_SHARD;
-                            } else if (t == Material.PRISMARINE_BRICKS) {
-                                name = "Advanced Prismarine";
-                                drop = Material.PRISMARINE_SHARD;
-                            } else if (t == Material.DARK_PRISMARINE) {
-                                name = "Heavy Prismarine";
-                                drop = Material.PRISMARINE_SHARD;
-                            } else if (t == Material.SEA_LANTERN) {
-                                name = "Crystalized Prismarine";
-                                drop = Material.PRISMARINE_CRYSTALS;
-                            } else if (t == Material.GLOWSTONE) {
-                                name = "Glowstone";
-                                drop = Material.GLOWSTONE_DUST;
-                            } else if (t == Material.COBBLED_DEEPSLATE) {
-                                name = "Deepslate";
-                                drop = Material.COBBLED_DEEPSLATE;
-                            } else if (t == Material.AMETHYST_BLOCK) {
-                                name = "Amethyst";
-                                drop = Material.AMETHYST_SHARD;
-                            } else if (t == Material.NETHERITE_BLOCK) {
-                                name = "Netherite";
-                                drop = Material.NETHERITE_INGOT;
-                            } else if (t == Material.NETHER_BRICKS) {
-                                name = "Bricks";
-                                drop = Material.NETHER_BRICK;
-                            } else if (t == Material.RED_NETHER_BRICKS) {
-                                name = "Red Bricks";
-                                drop = Material.NETHER_BRICK;
-                            } else if (t == Material.CRIMSON_STEM) {
-                                name = "Crimson";
-                                drop = Material.CRIMSON_FUNGUS;
-                            } else if (t == Material.NETHER_WART_BLOCK) {
-                                name = "Advanced Crimson";
-                                drop = Material.CRIMSON_FUNGUS;
-                            } else if (t == Material.WARPED_STEM) {
-                                name = "Warped";
-                                drop = Material.WARPED_FUNGUS;
-                            } else if (t == Material.WARPED_WART_BLOCK) {
-                                name = "Advanced Warped";
-                                drop = Material.WARPED_FUNGUS;
-                            } else if (t == Material.MAGMA_BLOCK) {
-                                name = "Magma";
-                                drop = Material.MAGMA_CREAM;
-                            } else if (t == Material.SHROOMLIGHT) {
-                                name = "Mushroom";
-                                drop = Material.RED_MUSHROOM;
-                            } else if (t == Material.PURPUR_BLOCK) {
-                                name = "Purpur";
-                                drop = Material.PURPLE_DYE;
-                            } else if (t == Material.PURPUR_PILLAR) {
-                                name = "Advanced Purpur";
-                                drop = Material.PURPLE_DYE;
-                            } else if (t == Material.CALCITE) {
-                                name = "Calcite";
-                                drop = Material.CALCITE;
-                            } else if (t == Material.TUFF) {
-                                name = "Tuff";
-                                drop = Material.TUFF;
-                            } else if (t == Material.RAW_IRON_BLOCK) {
-                                name = "Raw Iron";
-                                drop = Material.RAW_IRON;
-                            } else if (t == Material.RAW_COPPER_BLOCK) {
-                                name = "Raw Copper";
-                                drop = Material.RAW_COPPER;
-                            } else if (t == Material.RAW_GOLD_BLOCK) {
-                                name = "Raw Gold";
-                                drop = Material.RAW_GOLD;
-                            } else if (t == Material.DRIPSTONE_BLOCK) {
-                                name = "Ancient Ore";
-                                drop = Material.DRIPSTONE_BLOCK;
-                            } else {
-                                name = "null";
-                                drop = Material.LIGHT_BLUE_WOOL;
-                            }
-                            ItemStack preItem = new ItemStack(drop, 1);
-                            ItemMeta meta = preItem.getItemMeta();
+                                Location coords = new Location(world, location[0], location[1],
+                                        location[2]);
+                                Block bell = coords.getBlock();
+                                BlockData bellData = bell.getBlockData();
+                                Material t = bell.getRelative(((Directional) bellData).getFacing()).getType();
+                                Material drop;
+                                String name;
+                                if (t == Material.OAK_LOG) {
+                                    name = "Wood";
+                                    drop = Material.OAK_PLANKS;
+                                } else if (t == Material.LAPIS_BLOCK) {
+                                    name = "Lapis";
+                                    drop = Material.LAPIS_LAZULI;
+                                } else if (t == Material.IRON_BLOCK) {
+                                    name = "Iron";
+                                    drop = Material.IRON_INGOT;
+                                } else if (t == Material.REDSTONE_BLOCK) {
+                                    name = "Redstone";
+                                    drop = Material.REDSTONE;
+                                } else if (t == Material.GOLD_BLOCK) {
+                                    name = "Gold";
+                                    drop = Material.GOLD_INGOT;
+                                } else if (t == Material.DIAMOND_BLOCK) {
+                                    name = "Diamond";
+                                    drop = Material.DIAMOND;
+                                } else if (t == Material.EMERALD_BLOCK) {
+                                    name = "Emerald";
+                                    drop = Material.EMERALD;
+                                } else if (t == Material.WAXED_COPPER_BLOCK) {
+                                    name = "Copper";
+                                    drop = Material.COPPER_INGOT;
+                                } else if (t == Material.OXIDIZED_COPPER) {
+                                    name = "Aged Copper";
+                                    drop = Material.RAW_COPPER;
+                                } else if (t == Material.PRISMARINE) {
+                                    name = "Prismarine";
+                                    drop = Material.PRISMARINE_SHARD;
+                                } else if (t == Material.PRISMARINE_BRICKS) {
+                                    name = "Advanced Prismarine";
+                                    drop = Material.PRISMARINE_SHARD;
+                                } else if (t == Material.DARK_PRISMARINE) {
+                                    name = "Heavy Prismarine";
+                                    drop = Material.PRISMARINE_SHARD;
+                                } else if (t == Material.SEA_LANTERN) {
+                                    name = "Crystalized Prismarine";
+                                    drop = Material.PRISMARINE_CRYSTALS;
+                                } else if (t == Material.GLOWSTONE) {
+                                    name = "Glowstone";
+                                    drop = Material.GLOWSTONE_DUST;
+                                } else if (t == Material.COBBLED_DEEPSLATE) {
+                                    name = "Deepslate";
+                                    drop = Material.COBBLED_DEEPSLATE;
+                                } else if (t == Material.AMETHYST_BLOCK) {
+                                    name = "Amethyst";
+                                    drop = Material.AMETHYST_SHARD;
+                                } else if (t == Material.NETHERITE_BLOCK) {
+                                    name = "Netherite";
+                                    drop = Material.NETHERITE_INGOT;
+                                } else if (t == Material.NETHER_BRICKS) {
+                                    name = "Bricks";
+                                    drop = Material.NETHER_BRICK;
+                                } else if (t == Material.RED_NETHER_BRICKS) {
+                                    name = "Red Bricks";
+                                    drop = Material.NETHER_BRICK;
+                                } else if (t == Material.CRIMSON_STEM) {
+                                    name = "Crimson";
+                                    drop = Material.CRIMSON_FUNGUS;
+                                } else if (t == Material.NETHER_WART_BLOCK) {
+                                    name = "Advanced Crimson";
+                                    drop = Material.CRIMSON_FUNGUS;
+                                } else if (t == Material.WARPED_STEM) {
+                                    name = "Warped";
+                                    drop = Material.WARPED_FUNGUS;
+                                } else if (t == Material.WARPED_WART_BLOCK) {
+                                    name = "Advanced Warped";
+                                    drop = Material.WARPED_FUNGUS;
+                                } else if (t == Material.MAGMA_BLOCK) {
+                                    name = "Magma";
+                                    drop = Material.MAGMA_CREAM;
+                                } else if (t == Material.SHROOMLIGHT) {
+                                    name = "Mushroom";
+                                    drop = Material.RED_MUSHROOM;
+                                } else if (t == Material.PURPUR_BLOCK) {
+                                    name = "Purpur";
+                                    drop = Material.PURPLE_DYE;
+                                } else if (t == Material.PURPUR_PILLAR) {
+                                    name = "Advanced Purpur";
+                                    drop = Material.PURPLE_DYE;
+                                } else if (t == Material.CALCITE) {
+                                    name = "Calcite";
+                                    drop = Material.CALCITE;
+                                } else if (t == Material.TUFF) {
+                                    name = "Tuff";
+                                    drop = Material.TUFF;
+                                } else if (t == Material.RAW_IRON_BLOCK) {
+                                    name = "Raw Iron";
+                                    drop = Material.RAW_IRON;
+                                } else if (t == Material.RAW_COPPER_BLOCK) {
+                                    name = "Raw Copper";
+                                    drop = Material.RAW_COPPER;
+                                } else if (t == Material.RAW_GOLD_BLOCK) {
+                                    name = "Raw Gold";
+                                    drop = Material.RAW_GOLD;
+                                } else if (t == Material.DRIPSTONE_BLOCK) {
+                                    name = "Ancient Ore";
+                                    drop = Material.DRIPSTONE_BLOCK;
+                                } else {
+                                    name = "null";
+                                    drop = Material.LIGHT_BLUE_WOOL;
+                                }
+                                ItemStack preItem = new ItemStack(drop, 1);
+                                ItemMeta meta = preItem.getItemMeta();
 
-                            meta.displayName(
-                                    Component
-                                            .text(nonItalic("Mined "
-                                                    + name))
-                                            .color(TextColor.fromHexString("#8e8e8e")));
-                            preItem.setItemMeta(meta);
-                            Item item = world.dropItem(coords.add(coords, 0.5, -0.5, 0.5), preItem);
-                            item.setVelocity(new Vector());
+                                meta.displayName(
+                                        Component
+                                                .text(nonItalic("Mined "
+                                                        + name))
+                                                .color(TextColor.fromHexString("#8e8e8e")));
+                                preItem.setItemMeta(meta);
+                                Item item = world.dropItem(coords.add(coords, 0.5, -0.5, 0.5), preItem);
+                                item.setVelocity(new Vector());
 
+                            }}
                         }
                     }
-                }
-            }
-        }.runTaskTimer(this, 10, 10 * 20);
+                }, 10, 10 * 20);
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
             new Placeholders(this).register();
         }
@@ -821,8 +820,7 @@ public class App extends JavaPlugin implements Listener {
                         cooldown.remove(player.getName());
                     }
                 }, 4L);
-            }
-            else {
+            } else {
                 return;
             }
 
@@ -1162,73 +1160,73 @@ public class App extends JavaPlugin implements Listener {
                 Block tempBlockE = event.getClickedBlock().getRelative(BlockFace.WEST);
                 Block tempBlockN = event.getClickedBlock().getRelative(BlockFace.SOUTH);
                 Block tempBlockS = event.getClickedBlock().getRelative(BlockFace.NORTH);
-    
+
                 if (tempBlockW.getType() == Material.BELL) {
                     Directional direction = (Directional) tempBlockW.getBlockData();
                     if (direction.getFacing() == BlockFace.WEST) {
                         location = tempBlockW.getLocation();
                     }
                 }
-    
+
                 if (tempBlockE.getType() == Material.BELL) {
                     Directional direction = (Directional) tempBlockE.getBlockData();
                     if (direction.getFacing() == BlockFace.EAST) {
                         location = tempBlockE.getLocation();
                     }
                 }
-    
+
                 if (tempBlockN.getType() == Material.BELL) {
                     Directional direction = (Directional) tempBlockN.getBlockData();
                     if (direction.getFacing() == BlockFace.NORTH) {
                         location = tempBlockN.getLocation();
                     }
                 }
-    
+
                 if (tempBlockS.getType() == Material.BELL) {
                     Directional direction = (Directional) tempBlockS.getBlockData();
                     if (direction.getFacing() == BlockFace.SOUTH) {
                         location = tempBlockS.getLocation();
                     }
                 }
-    
+
                 Block facing = event.getClickedBlock().getRelative(BlockFace.UP);
                 tempBlockW = facing.getRelative(BlockFace.EAST);
                 tempBlockE = facing.getRelative(BlockFace.WEST);
                 tempBlockN = facing.getRelative(BlockFace.SOUTH);
                 tempBlockS = facing.getRelative(BlockFace.NORTH);
-    
+
                 if (tempBlockW.getType() == Material.BELL) {
                     Directional direction = (Directional) tempBlockW.getBlockData();
                     if (direction.getFacing() == BlockFace.WEST) {
                         location = tempBlockW.getLocation();
                     }
                 }
-    
+
                 if (tempBlockE.getType() == Material.BELL) {
                     Directional direction = (Directional) tempBlockE.getBlockData();
                     if (direction.getFacing() == BlockFace.EAST) {
                         location = tempBlockE.getLocation();
                     }
                 }
-    
+
                 if (tempBlockN.getType() == Material.BELL) {
                     Directional direction = (Directional) tempBlockN.getBlockData();
                     if (direction.getFacing() == BlockFace.NORTH) {
                         location = tempBlockN.getLocation();
                     }
                 }
-    
+
                 if (tempBlockS.getType() == Material.BELL) {
                     Directional direction = (Directional) tempBlockS.getBlockData();
                     if (direction.getFacing() == BlockFace.SOUTH) {
                         location = tempBlockS.getLocation();
                     }
                 }
-    
+
                 Integer[] x = { location.getBlockX(), location.getBlockY(), location.getBlockZ() };
                 for (Integer[] coords : item) {
                     if (Arrays.equals(coords, x)) {
-                        //EXECUTE GUI OPEN
+                        // EXECUTE GUI OPEN
                         if (playerName.get(i) == event.getPlayer().getName()) {
                             Block temp = location.getBlock();
                             BlockData bd = temp.getBlockData();
@@ -1236,116 +1234,140 @@ public class App extends JavaPlugin implements Listener {
                             Block temp2 = temp.getRelative(direction.getFacing());
                             Material mat = temp2.getType();
                             if (mat == Material.OAK_LOG) {
-                                MyGUIs.rankedInventory(Material.LAPIS_BLOCK, "Lapis", econ, 65,  temp2).open(player);
+                                MyGUIs.rankedInventory(Material.LAPIS_BLOCK, "Lapis", econ, 200, temp2).open(player);
                             } else if (mat == Material.LAPIS_BLOCK) {
-                                MyGUIs.rankedInventory(Material.IRON_BLOCK, "Iron", econ, 65,  temp2).open(player);
+                                MyGUIs.rankedInventory(Material.IRON_BLOCK, "Iron", econ, 300, temp2).open(player);
 
                             } else if (mat == Material.IRON_BLOCK) {
-                                MyGUIs.rankedInventory(Material.REDSTONE_BLOCK, "Redstone", econ, 65,  temp2).open(player);
+                                MyGUIs.rankedInventory(Material.REDSTONE_BLOCK, "Redstone", econ, 600, temp2)
+                                        .open(player);
 
                             } else if (mat == Material.REDSTONE_BLOCK) {
-                                MyGUIs.rankedInventory(Material.GOLD_BLOCK, "Gold", econ, 65,  temp2).open(player);
+                                MyGUIs.rankedInventory(Material.GOLD_BLOCK, "Gold", econ, 1000, temp2).open(player);
 
                             } else if (mat == Material.GOLD_BLOCK) {
-                                MyGUIs.rankedInventory(Material.DIAMOND_BLOCK, "Diamond", econ, 65,  temp2).open(player);
+                                MyGUIs.rankedInventory(Material.DIAMOND_BLOCK, "Diamond", econ, 1500, temp2)
+                                        .open(player);
 
                             } else if (mat == Material.DIAMOND_BLOCK) {
-                                MyGUIs.rankedInventory(Material.EMERALD_BLOCK, "Emerald", econ, 65,  temp2).open(player);
+                                MyGUIs.rankedInventory(Material.EMERALD_BLOCK, "Emerald", econ, 3000, temp2)
+                                        .open(player);
 
                             } else if (mat == Material.EMERALD_BLOCK) {
-                                MyGUIs.rankedInventory(Material.WAXED_COPPER_BLOCK, "Copper", econ, 65,  temp2).open(player);
+                                MyGUIs.rankedInventory(Material.WAXED_COPPER_BLOCK, "Copper", econ, 5000, temp2)
+                                        .open(player);
 
                             } else if (mat == Material.WAXED_COPPER_BLOCK) {
-                                MyGUIs.rankedInventory(Material.OXIDIZED_COPPER, "Ancient Copper", econ, 65,  temp2).open(player);
+                                MyGUIs.rankedInventory(Material.OXIDIZED_COPPER, "Ancient Copper", econ, 7500, temp2)
+                                        .open(player);
 
                             } else if (mat == Material.OXIDIZED_COPPER) {
-                                MyGUIs.rankedInventory(Material.PRISMARINE, "Prismarine", econ, 65,  temp2).open(player);
+                                MyGUIs.rankedInventory(Material.PRISMARINE, "Prismarine", econ, 8300, temp2)
+                                        .open(player);
 
                             } else if (mat == Material.PRISMARINE) {
-                                MyGUIs.rankedInventory(Material.PRISMARINE_BRICKS, "Advanced Prismarine", econ, 65,  temp2).open(player);
+                                MyGUIs.rankedInventory(Material.PRISMARINE_BRICKS, "Advanced Prismarine", econ, 10000,
+                                        temp2).open(player);
 
                             } else if (mat == Material.PRISMARINE_BRICKS) {
-                                MyGUIs.rankedInventory(Material.DARK_PRISMARINE, "Heavy Prismarine", econ, 65,  temp2).open(player);
+                                MyGUIs.rankedInventory(Material.DARK_PRISMARINE, "Heavy Prismarine", econ, 13000, temp2)
+                                        .open(player);
 
                             } else if (mat == Material.DARK_PRISMARINE) {
-                                MyGUIs.rankedInventory(Material.SEA_LANTERN, "Crystalised Prismarine", econ, 65,  temp2).open(player);
+                                MyGUIs.rankedInventory(Material.SEA_LANTERN, "Crystalised Prismarine", econ, 16000,
+                                        temp2).open(player);
 
                             } else if (mat == Material.SEA_LANTERN) {
-                                MyGUIs.rankedInventory(Material.GLOWSTONE, "Glowing", econ, 65,  temp2).open(player);
+                                MyGUIs.rankedInventory(Material.GLOWSTONE, "Glowing", econ, 20000, temp2).open(player);
 
                             } else if (mat == Material.GLOWSTONE) {
-                                MyGUIs.rankedInventory(Material.COBBLED_DEEPSLATE, "Cobbled", econ, 65,  temp2).open(player);
+                                MyGUIs.rankedInventory(Material.COBBLED_DEEPSLATE, "Cobbled", econ, 24000, temp2)
+                                        .open(player);
 
                             } else if (mat == Material.COBBLED_DEEPSLATE) {
-                                MyGUIs.rankedInventory(Material.AMETHYST_BLOCK, "Amethyst", econ, 65,  temp2).open(player);
+                                MyGUIs.rankedInventory(Material.AMETHYST_BLOCK, "Amethyst", econ, 29000, temp2)
+                                        .open(player);
 
                             } else if (mat == Material.AMETHYST_BLOCK) {
-                                MyGUIs.rankedInventory(Material.NETHERITE_BLOCK, "Netherite", econ, 65,  temp2).open(player);
+                                MyGUIs.rankedInventory(Material.NETHERITE_BLOCK, "Netherite", econ, 34000, temp2)
+                                        .open(player);
 
                             } else if (mat == Material.NETHERITE_BLOCK) {
-                                MyGUIs.rankedInventory(Material.NETHER_BRICKS, "Nether Brick", econ, 65,  temp2).open(player);
+                                MyGUIs.rankedInventory(Material.NETHER_BRICKS, "Nether Brick", econ, 38000, temp2)
+                                        .open(player);
 
                             } else if (mat == Material.NETHER_BRICKS) {
-                                MyGUIs.rankedInventory(Material.RED_NETHER_BRICKS, "Red Nether Brick", econ, 65,  temp2).open(player);
+                                MyGUIs.rankedInventory(Material.RED_NETHER_BRICKS, "Red Nether Brick", econ, 42000,
+                                        temp2).open(player);
 
                             } else if (mat == Material.RED_NETHER_BRICKS) {
-                                MyGUIs.rankedInventory(Material.CRIMSON_STEM, "Crimson", econ, 65,  temp2).open(player);
+                                MyGUIs.rankedInventory(Material.CRIMSON_STEM, "Crimson", econ, 46000, temp2)
+                                        .open(player);
 
                             } else if (mat == Material.CRIMSON_STEM) {
-                                MyGUIs.rankedInventory(Material.NETHER_WART_BLOCK, "Advanced Crimson", econ, 65,  temp2).open(player);
+                                MyGUIs.rankedInventory(Material.NETHER_WART_BLOCK, "Advanced Crimson", econ, 50000,
+                                        temp2).open(player);
 
                             } else if (mat == Material.NETHER_WART_BLOCK) {
-                                MyGUIs.rankedInventory(Material.WARPED_STEM, "Warped", econ, 65,  temp2).open(player);
+                                MyGUIs.rankedInventory(Material.WARPED_STEM, "Warped", econ, 54000, temp2).open(player);
 
                             } else if (mat == Material.WARPED_STEM) {
-                                MyGUIs.rankedInventory(Material.WARPED_WART_BLOCK, "Advanced Warped", econ, 65,  temp2).open(player);
+                                MyGUIs.rankedInventory(Material.WARPED_WART_BLOCK, "Advanced Warped", econ, 59000,
+                                        temp2).open(player);
 
                             } else if (mat == Material.WARPED_WART_BLOCK) {
-                                MyGUIs.rankedInventory(Material.MAGMA_BLOCK, "Molten", econ, 65,  temp2).open(player);
+                                MyGUIs.rankedInventory(Material.MAGMA_BLOCK, "Molten", econ, 64000, temp2).open(player);
 
                             } else if (mat == Material.MAGMA_BLOCK) {
-                                MyGUIs.rankedInventory(Material.SHROOMLIGHT, "Shroom", econ, 65,  temp2).open(player);
+                                MyGUIs.rankedInventory(Material.SHROOMLIGHT, "Shroom", econ, 70000, temp2).open(player);
 
                             } else if (mat == Material.SHROOMLIGHT) {
-                                MyGUIs.rankedInventory(Material.PURPUR_BLOCK, "Purpur", econ, 65,  temp2).open(player);
+                                MyGUIs.rankedInventory(Material.PURPUR_BLOCK, "Purpur", econ, 90000, temp2)
+                                        .open(player);
 
                             } else if (mat == Material.PURPUR_BLOCK) {
-                                MyGUIs.rankedInventory(Material.PURPUR_PILLAR, "Advanced Purpur", econ, 65,  temp2).open(player);
+                                MyGUIs.rankedInventory(Material.PURPUR_PILLAR, "Advanced Purpur", econ, 130000, temp2)
+                                        .open(player);
 
                             } else if (mat == Material.PURPUR_PILLAR) {
-                                MyGUIs.rankedInventory(Material.CALCITE, "Calcite", econ, 65,  temp2).open(player);
+                                MyGUIs.rankedInventory(Material.CALCITE, "Calcite", econ, 240000, temp2).open(player);
 
                             } else if (mat == Material.CALCITE) {
-                                MyGUIs.rankedInventory(Material.TUFF, "Tuff", econ, 65,  temp2).open(player);
+                                MyGUIs.rankedInventory(Material.TUFF, "Tuff", econ, 320000, temp2).open(player);
 
                             } else if (mat == Material.TUFF) {
-                                MyGUIs.rankedInventory(Material.RAW_IRON_BLOCK, "Raw Iron", econ, 65,  temp2).open(player);
+                                MyGUIs.rankedInventory(Material.RAW_IRON_BLOCK, "Raw Iron", econ, 400000, temp2)
+                                        .open(player);
 
                             } else if (mat == Material.RAW_IRON_BLOCK) {
-                                MyGUIs.rankedInventory(Material.RAW_COPPER_BLOCK, "Raw Copper", econ, 65,  temp2).open(player);
+                                MyGUIs.rankedInventory(Material.RAW_COPPER_BLOCK, "Raw Copper", econ, 500000, temp2)
+                                        .open(player);
 
                             } else if (mat == Material.RAW_COPPER_BLOCK) {
-                                MyGUIs.rankedInventory(Material.RAW_GOLD_BLOCK, "Raw Gold", econ, 65,  temp2).open(player);
+                                MyGUIs.rankedInventory(Material.RAW_GOLD_BLOCK, "Raw Gold", econ, 1000000, temp2)
+                                        .open(player);
 
                             } else if (mat == Material.RAW_GOLD_BLOCK) {
-                                MyGUIs.rankedInventory(Material.DRIPSTONE_BLOCK, "Ancient", econ, 65,  temp2).open(player);
+                                MyGUIs.rankedInventory(Material.DRIPSTONE_BLOCK, "Ancient", econ, 10000000, temp2)
+                                        .open(player);
 
-                            //} else if (mat == Material.DRIPSTONE_BLOCK) {
-                                //MyGUIs.rankedInventory(Material.LAPIS_BLOCK, "Lais", econ, 65,  temp2).open(player);
+                                // } else if (mat == Material.DRIPSTONE_BLOCK) {
+                                // MyGUIs.rankedInventory(Material.LAPIS_BLOCK, "Lais", econ, 65,
+                                // temp2).open(player);
 
                             } else {
                                 return;
                             }
-    
+
                         }
-    
+
                         return;
                     }
                 }
                 i++;
             }
 
-            //End Of Detector
+            // End Of Detector
         }
         return;
     }
@@ -1535,51 +1557,52 @@ public class App extends JavaPlugin implements Listener {
             });
             Integer total = 0;
             ArrayList<Pair<Integer, ArrayList<Integer>>> items = new ArrayList<Pair<Integer, ArrayList<Integer>>>();
-                items.add(createSellItem("Wood", Material.OAK_PLANKS, inv));
-                items.add(createSellItem("Lapis", Material.LAPIS_LAZULI, inv));
-                items.add(createSellItem("Iron", Material.IRON_INGOT, inv));
-                items.add(createSellItem("Redstone", Material.REDSTONE, inv));
-                items.add(createSellItem("Gold", Material.GOLD_INGOT, inv));
-                items.add(createSellItem("Diamond", Material.DIAMOND, inv));
-                items.add(createSellItem("Emerald", Material.EMERALD, inv));
-                items.add(createSellItem("Copper", Material.COPPER_INGOT, inv));
-                items.add(createSellItem("Aged Copper", Material.RAW_COPPER, inv));
-                items.add(createSellItem("Prismarine", Material.PRISMARINE_SHARD, inv));
-                items.add(createSellItem("Advanced Prismarine", Material.PRISMARINE_SHARD, inv));
-                items.add(createSellItem("Heavy Prismarine", Material.PRISMARINE_SHARD, inv));
-                items.add(createSellItem("Crystalized Prismarine", Material.PRISMARINE_CRYSTALS, inv));
-                items.add(createSellItem("Glowstone", Material.GLOWSTONE_DUST, inv));
-                items.add(createSellItem("Deepslate", Material.COBBLED_DEEPSLATE, inv));
-                items.add(createSellItem("Amethyst", Material.AMETHYST_SHARD, inv));
-                items.add(createSellItem("Netherite", Material.NETHERITE_INGOT, inv));
-                items.add(createSellItem("Bricks", Material.NETHER_BRICK, inv));
-                items.add(createSellItem("Red Bricks", Material.NETHER_BRICK, inv));
-                items.add(createSellItem("Crimson", Material.CRIMSON_FUNGUS, inv));
-                items.add(createSellItem("Advanced Crimson", Material.CRIMSON_FUNGUS, inv));
-                items.add(createSellItem("Warped", Material.WARPED_FUNGUS, inv));
-                items.add(createSellItem("Advanced Warped", Material.WARPED_FUNGUS, inv));
-                items.add(createSellItem("Magma", Material.MAGMA_CREAM, inv));
-                items.add(createSellItem("Mushroom", Material.RED_MUSHROOM, inv));
-                items.add(createSellItem("Purpur", Material.PURPLE_DYE, inv));
-                items.add(createSellItem("Advanced Purpur", Material.PURPLE_DYE, inv));
-                items.add(createSellItem("Calcite", Material.CALCITE, inv));
-                items.add(createSellItem("Tuff", Material.TUFF, inv));
-                items.add(createSellItem("Raw Iron", Material.RAW_IRON, inv));
-                items.add(createSellItem("Raw Copper", Material.RAW_COPPER, inv));
-                items.add(createSellItem("Raw Gold", Material.RAW_GOLD, inv));
-                items.add(createSellItem("Ancient Ore", Material.DRIPSTONE_BLOCK, inv));
-                items.add(createSellItem("null", Material.LIGHT_BLUE_WOOL, inv));
-                for(Pair<Integer, ArrayList<Integer>> item : items) {
-                    for(Integer key : item.second()) {
-                        inv.setItem(key, new ItemStack(Material.AIR));
-                    }
-                    total += item.first();
+            items.add(createSellItem("Wood", Material.OAK_PLANKS, inv));
+            items.add(createSellItem("Lapis", Material.LAPIS_LAZULI, inv));
+            items.add(createSellItem("Iron", Material.IRON_INGOT, inv));
+            items.add(createSellItem("Redstone", Material.REDSTONE, inv));
+            items.add(createSellItem("Gold", Material.GOLD_INGOT, inv));
+            items.add(createSellItem("Diamond", Material.DIAMOND, inv));
+            items.add(createSellItem("Emerald", Material.EMERALD, inv));
+            items.add(createSellItem("Copper", Material.COPPER_INGOT, inv));
+            items.add(createSellItem("Aged Copper", Material.RAW_COPPER, inv));
+            items.add(createSellItem("Prismarine", Material.PRISMARINE_SHARD, inv));
+            items.add(createSellItem("Advanced Prismarine", Material.PRISMARINE_SHARD, inv));
+            items.add(createSellItem("Heavy Prismarine", Material.PRISMARINE_SHARD, inv));
+            items.add(createSellItem("Crystalized Prismarine", Material.PRISMARINE_CRYSTALS, inv));
+            items.add(createSellItem("Glowstone", Material.GLOWSTONE_DUST, inv));
+            items.add(createSellItem("Deepslate", Material.COBBLED_DEEPSLATE, inv));
+            items.add(createSellItem("Amethyst", Material.AMETHYST_SHARD, inv));
+            items.add(createSellItem("Netherite", Material.NETHERITE_INGOT, inv));
+            items.add(createSellItem("Bricks", Material.NETHER_BRICK, inv));
+            items.add(createSellItem("Red Bricks", Material.NETHER_BRICK, inv));
+            items.add(createSellItem("Crimson", Material.CRIMSON_FUNGUS, inv));
+            items.add(createSellItem("Advanced Crimson", Material.CRIMSON_FUNGUS, inv));
+            items.add(createSellItem("Warped", Material.WARPED_FUNGUS, inv));
+            items.add(createSellItem("Advanced Warped", Material.WARPED_FUNGUS, inv));
+            items.add(createSellItem("Magma", Material.MAGMA_CREAM, inv));
+            items.add(createSellItem("Mushroom", Material.RED_MUSHROOM, inv));
+            items.add(createSellItem("Purpur", Material.PURPLE_DYE, inv));
+            items.add(createSellItem("Advanced Purpur", Material.PURPLE_DYE, inv));
+            items.add(createSellItem("Calcite", Material.CALCITE, inv));
+            items.add(createSellItem("Tuff", Material.TUFF, inv));
+            items.add(createSellItem("Raw Iron", Material.RAW_IRON, inv));
+            items.add(createSellItem("Raw Copper", Material.RAW_COPPER, inv));
+            items.add(createSellItem("Raw Gold", Material.RAW_GOLD, inv));
+            items.add(createSellItem("Ancient Ore", Material.DRIPSTONE_BLOCK, inv));
+            items.add(createSellItem("null", Material.LIGHT_BLUE_WOOL, inv));
+            for (Pair<Integer, ArrayList<Integer>> item : items) {
+                for (Integer key : item.second()) {
+                    inv.setItem(key, new ItemStack(Material.AIR));
                 }
+                total += item.first();
+            }
             EconomyResponse r = econ.depositPlayer(player, total);
             if (r.transactionSuccess()) {
-                sender.sendMessage(Component.text("Sold Mined Items For ").color(TextColor.fromHexString("#2fad37")).append(Component.text(econ.format(r.amount)).color(TextColor.fromHexString("#FF5555"))));
-                //Below Here Is Debug
-//End Of Debug
+                sender.sendMessage(Component.text("Sold Mined Items For ").color(TextColor.fromHexString("#2fad37"))
+                        .append(Component.text(econ.format(r.amount)).color(TextColor.fromHexString("#FF5555"))));
+                // Below Here Is Debug
+                // End Of Debug
 
             } else {
                 sender.sendMessage(String.format("An error occured: %s", r.errorMessage));
@@ -1594,9 +1617,10 @@ public class App extends JavaPlugin implements Listener {
             player.sendMessage("Configuration Has Been Reloaded.");
             return true;
         }
-        if(cmd.getName().equalsIgnoreCase("buydropper") && sender instanceof Player) {
+        if (cmd.getName().equalsIgnoreCase("buydropper") && sender instanceof Player) {
             Player player = (Player) sender;
-            MyGUIs.mainDropperBuyInventory(createConveyorItem("Basic Conveyor", "#a8a8a8", "1"), createDropperItem("Basic Dropper", "#a8a8a8", "5"), econ).open(player);
+            MyGUIs.mainDropperBuyInventory(createConveyorItem("Basic Conveyor", "#a8a8a8", "1"),
+                    createDropperItem("Basic Dropper", "#a8a8a8", "5"), econ).open(player);
             return true;
         }
         if (cmd.getName().equalsIgnoreCase("giveitems") && sender instanceof Player) {
