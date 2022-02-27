@@ -34,3 +34,9 @@ commands:
    buydropper:
        description: GUI for Buying a Dropper
        usage: /<command>
+   spawn:
+       description: Teleports You To The Current Spawn
+       usage: /<command>
+   setspawn:
+       description: Sets The Spawn
+       usage: /<command>

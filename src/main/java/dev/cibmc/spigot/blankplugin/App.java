@@ -14,6 +14,7 @@ import org.bukkit.World;
 import org.bukkit.configuration.file.YamlConfiguration;
 import java.io.File;
 import java.util.Random;
+import java.util.Set;
 
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.inventory.EquipmentSlot;
@@ -59,10 +60,14 @@ import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.inventory.PlayerInventory;
+import java.util.Date;
+import java.util.Calendar;
 
 public class App extends JavaPlugin implements Listener {
     File file = new File("./config/", "blockSpeedConfig.yml");
     YamlConfiguration blockSpeedConfig = YamlConfiguration.loadConfiguration(file);
+    File f = new File(getDataFolder(), "spawn.yml");
+    YamlConfiguration spawnLocations = YamlConfiguration.loadConfiguration(f);
     private Map<String, Database> databases = new HashMap<String, Database>();
     public static App INSTANCE;
 
@@ -70,9 +75,47 @@ public class App extends JavaPlugin implements Listener {
     static ArrayList<ArrayList<Integer[]>> bellLocations = new ArrayList<ArrayList<Integer[]>>();
     static Database database;
     private static Economy econ = null;
+    static ArrayList<Integer> currentSpawn = new ArrayList<Integer>();
 
     @Override
     public void onEnable() {
+        String day = (String) spawnLocations.get("day");
+        getLogger().info("DAY IS: " + day);
+        Date d = new Date();
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(d);
+        Integer date = cal.get(Calendar.DAY_OF_WEEK);
+        if(Integer.parseInt(day) != date) {
+            getLogger().info("NEW ONE:" + day + "also " + String.valueOf(date));
+            int maxIndex = spawnLocations.getKeys(true).size() - 2;
+            Random rand = new Random();
+            int n = rand.nextInt(maxIndex);
+            spawnLocations.set("day", String.valueOf(date));
+            try {
+                spawnLocations.save(f);
+            } catch (IOException e) {
+                getLogger().warning("Unable to save Spawn Configuration."); // shouldn't really happen, but save
+                                                                                // throws the exception
+            }
+            String currSpawnStr = (String) spawnLocations.get(String.valueOf(n));
+            String[] currSpawn = currSpawnStr.split(",");
+            currentSpawn.add(Integer.parseInt(currSpawn[0]));
+            currentSpawn.add(Integer.parseInt(currSpawn[1]));
+            currentSpawn.add(Integer.parseInt(currSpawn[2]));
+            currentSpawn.add(Integer.parseInt(currSpawn[3]));
+
+
+        }
+        else {
+            Integer i = (Integer) spawnLocations.get("current");
+            String currSpawnStr = (String) spawnLocations.get(String.valueOf(i));
+            String[] currSpawn = currSpawnStr.split(",");
+            currentSpawn.add(Integer.parseInt(currSpawn[0]));
+            currentSpawn.add(Integer.parseInt(currSpawn[1]));
+            currentSpawn.add(Integer.parseInt(currSpawn[2]));
+            currentSpawn.add(Integer.parseInt(currSpawn[3]));
+        }
+
         if (!setupEconomy()) {
             getLogger().severe(
                     String.format("[%s] - Disabled due to no Vault dependency found!", getDescription().getName()));
@@ -1625,6 +1668,7 @@ public class App extends JavaPlugin implements Listener {
         }
         if (cmd.getName().equalsIgnoreCase("giveitems") && sender instanceof Player) {
             Player player = (Player) sender;
+            if(player.hasPermission("blankplugin.debug")){
             player.getInventory().addItem(createConveyorItem("Basic Conveyor", "#a8a8a8", "1"));
             player.getInventory().addItem(createConveyorItem("Simple Conveyor", "#a8a8a8", "1.6"));
             player.getInventory().addItem(createConveyorItem("Very Slow Conveyor", "#a8a8a8", "2"));
@@ -1643,11 +1687,16 @@ public class App extends JavaPlugin implements Listener {
             player.getInventory().addItem(createConveyorItem("Godly Communist Conveyor", "#a8a8a8", "13.6"));
 
             player.sendMessage("Given Player Item");
+            }
+            else {
+                player.sendMessage(ChatColor.RED + "Insufficient Permissions");
+            }
             return true;
         }
 
         if (cmd.getName().equalsIgnoreCase("givedroppers") && sender instanceof Player) {
             Player player = (Player) sender;
+            if(player.hasPermission("blankplugin.debug")){
             player.getInventory().addItem(createDropperItem("Basic Dropper", "#a8a8a8", "5"));
             player.getInventory().addItem(createDropperItem("Lapis Dropper", "#a8a8a8", "10"));
             player.getInventory().addItem(createDropperItem("Iron Dropper", "#a8a8a8", "15"));
@@ -1683,7 +1732,80 @@ public class App extends JavaPlugin implements Listener {
             player.getInventory().addItem(createDropperItem("Ancient Dropper", "#a8a8a8", "900"));
 
             player.sendMessage("Given Player Item");
+        }
+        else {
+            player.sendMessage(ChatColor.RED + "Insufficient Permissions");
+        }
             return true;
+        }
+        if(cmd.getName().equalsIgnoreCase("spawn") && sender instanceof Player) {
+            Player player = (Player) sender;
+            String day = (String) spawnLocations.get("day");
+            Date d = new Date();
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(d);
+            Integer date = cal.get(Calendar.DAY_OF_WEEK);
+            if(Integer.parseInt(day) != date) {
+                int maxIndex = spawnLocations.getKeys(true).size() - 2;
+                Random rand = new Random();
+                int n = rand.nextInt(maxIndex);
+                spawnLocations.set("day", String.valueOf(date));
+                try {
+                    spawnLocations.save(f);
+                } catch (IOException e) {
+                    getLogger().warning("Unable to save Spawn Configuration."); // shouldn't really happen, but save
+                                                                                    // throws the exception
+                }
+                String currSpawnStr = (String) spawnLocations.get(String.valueOf(n));
+                String[] currSpawn = currSpawnStr.split(",");
+                currentSpawn.set(0, Integer.parseInt(currSpawn[0]));
+                currentSpawn.set(1, Integer.parseInt(currSpawn[1]));
+                currentSpawn.set(2, Integer.parseInt(currSpawn[2]));
+                currentSpawn.set(3, Integer.parseInt(currSpawn[3]));
+    
+    
+            }
+            World world = Bukkit.getWorld("testingWorld");
+            Location loc = new Location(world, currentSpawn.get(0), currentSpawn.get(1), currentSpawn.get(2));
+            loc.setPitch(currentSpawn.get(3));
+            player.teleport(loc);
+            return true;
+        }
+        if(cmd.getName().equalsIgnoreCase("setspawn") && sender instanceof Player) {
+            Player player = (Player) sender;
+            if(player.hasPermission("blankplugin.setspawn")){
+                Set<String> keys = spawnLocations.getKeys(true);
+                keys.size();
+                //keys.forEach((String key) -> {
+                //    System.out.println(name);
+                //});
+                Location loc = player.getLocation();
+                double facing = loc.getPitch();
+                int face = 0;
+                if(facing > 135 && facing > -134.9) {
+                    face = 180;//NORTH
+                }
+                if(facing > -135 && facing > -44.9) {
+                    face = -90;//EAST
+                }
+                if(facing > -45 && facing < 44.9) {
+                    face = 0;//SOUTH
+                }
+                else {
+                    face = 90;//WEST
+                }
+                spawnLocations.set(String.valueOf(keys.size() - 2), String.valueOf(loc.getBlockX()) + "," + String.valueOf(loc.getBlockY())+ "," + String.valueOf(loc.getBlockZ()) + "," + String.valueOf(face));
+                try {
+                    spawnLocations.save(f);
+                } catch (IOException e) {
+                    getLogger().warning("Unable to save Spawn Configuration."); // shouldn't really happen, but save
+                                                                                    // throws the exception
+                }
+
+            }
+            else {
+                player.sendMessage(ChatColor.RED + "Insufficient Permissions");
+            }
         }
 
         return false;
