@@ -68,6 +68,9 @@ public class App extends JavaPlugin implements Listener {
     YamlConfiguration blockSpeedConfig = YamlConfiguration.loadConfiguration(file);
     File f = new File(getDataFolder(), "spawn.yml");
     YamlConfiguration spawnLocations = YamlConfiguration.loadConfiguration(f);
+    File f2 = new File(getDataFolder(), "teleport.yml");
+    YamlConfiguration teleportLocations = YamlConfiguration.loadConfiguration(f2);
+    
     private Map<String, Database> databases = new HashMap<String, Database>();
     public static App INSTANCE;
 
@@ -76,9 +79,16 @@ public class App extends JavaPlugin implements Listener {
     static Database database;
     private static Economy econ = null;
     static ArrayList<Integer> currentSpawn = new ArrayList<Integer>();
+    static ArrayList<Integer[]> teleportLocationsList = new ArrayList<Integer[]>();
 
     @Override
     public void onEnable() {
+        for(int i=0; i < teleportLocations.getKeys(true).size(); i++) {
+            String str = (String) teleportLocations.get(String.valueOf(i));
+            String[] origin = str.split(",");
+            Integer[] tmp = {Integer.parseInt(origin[0]),Integer.parseInt(origin[1]),Integer.parseInt(origin[2]),Integer.parseInt(origin[3]),Integer.parseInt(origin[4]),Integer.parseInt(origin[5])};
+            teleportLocationsList.add(tmp);
+        }
         String day = (String) spawnLocations.get("day");
         getLogger().info("DAY IS: " + day);
         Date d = new Date();
@@ -611,6 +621,28 @@ public class App extends JavaPlugin implements Listener {
         // will check if the player is in the portal or not.
         Player player = event.getPlayer();
         Location loc = player.getLocation();
+        for(Integer[] coord : teleportLocationsList) {
+            if(loc.getBlockX() == coord[0]) {
+            if(loc.getBlockY() == coord[1]) {
+                if(loc.getBlockZ() == coord[2]) {
+            if(player.getWorld().equals(Bukkit.getWorld("testingWorld"))) {
+            int decimalX = (int) loc.getBlockX();
+                    int decimalY = (int) loc.getBlockY();
+                    int decimalZ = (int) loc.getBlockZ();
+                    double fractionalX = loc.getX() - decimalX;
+                    double fractionalY = loc.getY() - decimalY;
+                    double fractionalZ = loc.getZ() - decimalZ;
+                    Location dest = new Location(player.getWorld(), coord[3] + fractionalX, coord[4] + fractionalY, coord[5] + fractionalZ);
+                    dest.setPitch(loc.getPitch());
+                    dest.setYaw(loc.getYaw());
+                    Vector velo = player.getVelocity();
+                    player.teleport(dest);
+                    velo.setY(-1);
+                    player.setVelocity(velo);
+
+            }}}}
+        }
+        /*
         if (-34 < loc.getX() && loc.getX() < -29) {
             double y = loc.getY();
             if (-317 < loc.getZ() && loc.getZ() < -316) {
@@ -636,7 +668,8 @@ public class App extends JavaPlugin implements Listener {
                 }
 
             }
-        }
+        }*/
+
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
